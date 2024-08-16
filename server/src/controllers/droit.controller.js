@@ -2,7 +2,7 @@ const Droit = require('../models/Droit.model')
 
 
 const addDroit = async (req, res) => {
-    const {autorisation } = req.body
+    const { autorisation } = req.body
     try {
         const rep = await Droit.create({autorisation: autorisation})
         const msg = 'Droit enregistré avec succès'
