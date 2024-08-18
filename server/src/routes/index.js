@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { addDroit, getDroits, updateDroit, deleteDroit } = require('../controllers/droit.controller')
 const { addProfil, getProfils, getProfilDetails, updateProfil, updateProfilDroits, deleteProfil } = require('../controllers/profil.controller')
+const { addUser, getUsers, login, getUserDetails, deleteUser } = require('../controllers/user.controller')
 
 //Routes liées aux DROITS
 router.route('/api/droits')
@@ -10,6 +11,7 @@ router.route('/api/droits')
 router.route('/api/droit/:id')
     .put(updateDroit)
     .delete(deleteDroit)
+
 
 //Routes liées aux PROFILS
 router.route('/api/profils')
@@ -20,9 +22,15 @@ router.route('/api/profil/:id')
     .put(updateProfilDroits, updateProfil)
     .delete(deleteProfil)
    
-//Routes liées aux USERS
 
-router.route('api/users')
+//Routes liées aux USERS
+router.post('/api/login', login)
+router.route('/api/users')
+    .post(addUser)
+    .get(getUsers)
+router.route('/api/user/:id')
+    .get(getUserDetails)
+    .delete(deleteUser)
 
 
 

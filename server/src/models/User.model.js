@@ -7,6 +7,7 @@ const userModel = new Schema({
     email: {type: String, required: true, unique: true},
     telephone: {type: String, required: true},
     password: {type: String, required: true},
+    etat: {type: Boolean, default: true},
     profilId: {type: Schema.Types.ObjectId, ref: 'Profil', required: true}
 }, {timestamps: true})
 
