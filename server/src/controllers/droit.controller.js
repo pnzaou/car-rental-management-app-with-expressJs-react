@@ -4,7 +4,7 @@ const Droit = require('../models/Droit.model')
 const addDroit = async (req, res) => {
     const { autorisation } = req.body
     try {
-        const rep = await Droit.create({autorisation: autorisation})
+        const rep = await Droit.create({autorisation})
         const msg = 'Droit enregistré avec succès'
         return res.status(201).json({message: msg, data: rep})
     } catch (error) {
@@ -28,7 +28,7 @@ const updateDroit = async (req, res) => {
     const {autorisation } = req.body
     const id = req.params.id
     try {
-        const rep = await Droit.findByIdAndUpdate(id, {autorisation: autorisation}, {new: true})
+        const rep = await Droit.findByIdAndUpdate(id, {autorisation}, {new: true})
         const msg = 'Modification réussie'
         return res.status(200).json({message: msg, data: rep})
     } catch (error) {

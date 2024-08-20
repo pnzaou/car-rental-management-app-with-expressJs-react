@@ -82,7 +82,7 @@ const getUserDetails = async (req, res) => {
         return res.status(200).json({message: msg, data: {user, profil}})
     } catch (error) {
         const msg = 'Erreur lors de la récupération de l\'utilisateur'
-        return res.status(200).json({message: msg, erreur: error})
+        return res.status(500).json({message: msg, erreur: error})
     }
 }
 
@@ -94,18 +94,50 @@ const deleteUser = async (req, res) => {
         return res.status(200).json({message: msg, data: rep})
     } catch (error) {
         const msg = 'Erreur lors de la suppréssion'
-        return res.status(200).json({message: msg, erreur: error})
+        return res.status(500).json({message: msg, erreur: error})
     }
 }
 
-// const updatePassword = async (req, res) => {
+const updatePassword = async (req, res) => {
+    const {userId} =  req.userData
+    const {password} = req.body
+    try {
 
-// }
+        const tour = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(password, tour)
+        const rep = await User.updateOne({ _id: userId }, { $set: { password: hashedPassword } })
+        const msg = 'Mot de passe modifié avec succès'
+        return res.status(200).json({message: msg, data: rep})
+
+    } catch (error) {
+
+        const msg = 'Erreur lors de la modification du mot de passe'
+        return res.status(500).json({message: msg, erreur: error})
+
+    }    
+}
+
+const toggleUserState = async (req, res) => {
+    const { id } = req.params
+    try {
+        const user = await User.findById(id)
+        user.etat = !user.etat
+
+        const rep = await user.save()
+        const msg = `Utilisateur ${ rep.etat ? 'débloqué' : 'bloqué'} avec succès`
+        return res.status(200).json({message: msg, data: rep})
+    } catch (error) {
+        const msg = 'Une erreur est survenue'
+        return res.status(500).json({message: msg, erreur: error})
+    }
+}
 
 module.exports = {
     login,
     addUser,
     getUsers,
     getUserDetails,
-    deleteUser
+    deleteUser,
+    updatePassword,
+    toggleUserState
 }
