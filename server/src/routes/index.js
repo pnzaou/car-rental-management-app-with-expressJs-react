@@ -40,7 +40,7 @@ router.patch('/api/user/password', verifyToken, updatePassword)
 //Routes liées aux CATEGORIES
 router.route('/api/categories')
     .post(addCategorie)
-    .get(getCategories)
+    .get(verifyToken, getCategories)
 router.route('/api/categorie/:id')
     .put(updateCategorie)
     .delete(deleteCategorie)

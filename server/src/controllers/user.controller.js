@@ -2,6 +2,7 @@ const User = require('../models/User.model')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const Profil = require('../models/Profil.model')
+const fs = require('fs')
 
 const addUser = async (req, res) => {
     const {nom, prenom, email, telephone, password, profilId} = req.body
@@ -51,13 +52,14 @@ const login = async (req, res) => {
                 if(!verifiedPassword) {
                     return res.status(404).json({message: 'Email ou mot de passe incorrect'})
                 } else {
+                    const secret = fs.readFileSync('./.meow/meowPr.pem')
                     const token = jwt.sign(
                         {
                             userId: user._id,
                             userEmail: email,
                             userProfil: user.profilId
                         },
-                        process.env.SECRET_KEY, {expiresIn: '4h'}
+                        secret, {expiresIn: '4h', algorithm: "RS256"}
                     )
                     const msg = 'Connexion réussie'
                     return res.status(200).json({message: msg, token: token})
