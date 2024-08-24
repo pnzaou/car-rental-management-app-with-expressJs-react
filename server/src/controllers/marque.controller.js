@@ -61,28 +61,7 @@ const deleteMarque = async (req, res) => {
 const updateMarque = async (req, res) => {
     const { id } = req.params
     const { nom, paysDorigine } = req.body
-    // try {
-    //     if(req.file) {
-    //         const marque = await Marque.findById(id)
-    //         const { logo } = marque
-    //         deleteLogo(logo)
-    //         rep = await marque.updateOne({$set: {
-    //             nom,
-    //             paysDorigine,
-    //             logo: `${req.protocol}://${req.get(host)}/uploads/${req.file.filename}`
-    //         }})
-    //     } else {
-    //         rep = await Marque.updateOne({_id: id},{$set: {
-    //             nom,
-    //             paysDorigine
-    //         }})
-    //     }
-    //     const msg = 'Marque modifiée avec succès'
-    //     return res.status(200).json({message: msg, data: rep})
-    // } catch (error) {
-    //     const msg ="Erreur lors de la modification"
-    //     return res.status(500).json({message: msg, erreur: error})
-    // }
+    
     try {
         const marque = await Marque.findById(id)
         const { logo } = marque
