@@ -7,6 +7,7 @@ const { addProfil, getProfils, getProfilDetails, updateProfil, updateProfilDroit
 const { addUser, getUsers, login, getUserDetails, deleteUser, updatePassword, toggleUserState } = require('../controllers/user.controller')
 const { addCategorie, updateCategorie, getCategories, deleteCategorie } = require('../controllers/categorie.controller')
 const { addMarque, getMarques, deleteMarque, updateMarque } = require('../controllers/marque.controller')
+const { addModele, getModeles, updateModele, deleteModele } = require('../controllers/modele.controller')
 
 //Routes liées aux DROITS
 router.route('/api/droits')
@@ -57,5 +58,12 @@ router.route('/api/marque/:id')
     .delete(deleteMarque)
 
 
+//Routes liées aux MODELES
+router.route('/api/modeles')
+    .post(addModele)
+    .get(getModeles)
+router.route('api/modele:id')
+    .put(updateModele)
+    .delete(deleteModele)
 
 module.exports = router

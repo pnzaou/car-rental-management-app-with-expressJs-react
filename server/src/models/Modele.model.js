@@ -3,7 +3,7 @@ const { Schema, model } = mongoose
 
 const modeleModel = new Schema({
     nom: {type: String, required: true},
-    description: String,
+    description: {type: String, default: null},
     marqueId: {type: Schema.Types.ObjectId, ref: 'Marque', required: true}
 }, {timestamps: true})
 
