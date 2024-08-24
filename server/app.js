@@ -1,4 +1,5 @@
 const express = require('express')
+const path = require('path')
 const cors = require('cors')
 const connexion = require('./src/db/db')
 const router = require('./src/routes')
@@ -10,6 +11,7 @@ const port = process.env.PORT || 5000
 app
 .use(cors())
 .use(express.json())
+.use('/uploads', express.static(path.join(__dirname, "src/uploads")))
 .use(router)
 
 app.get('/', (req, res) => {
@@ -20,4 +22,5 @@ connexion()
 
 app.listen(port, () => {
     console.log(`Notre serveur est executé sur http://localhost:${port}`);
+    console.log(path.join(__dirname, "src/uploads"));
 })

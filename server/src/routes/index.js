@@ -1,10 +1,12 @@
 const express = require('express')
 const router = express.Router()
+const verifyToken = require('../middlewares/verifyToken.middleware')
+const { uploadMultiple, uploadSingle } = require('../middlewares/multer.middleware')
 const { addDroit, getDroits, updateDroit, deleteDroit } = require('../controllers/droit.controller')
 const { addProfil, getProfils, getProfilDetails, updateProfil, updateProfilDroits, deleteProfil } = require('../controllers/profil.controller')
 const { addUser, getUsers, login, getUserDetails, deleteUser, updatePassword, toggleUserState } = require('../controllers/user.controller')
-const verifyToken = require('../middlewares/verifyToken.middleware')
 const { addCategorie, updateCategorie, getCategories, deleteCategorie } = require('../controllers/categorie.controller')
+const { addMarque, getMarques, deleteMarque, updateMarque } = require('../controllers/marque.controller')
 
 //Routes liées aux DROITS
 router.route('/api/droits')
@@ -40,15 +42,19 @@ router.patch('/api/user/password', verifyToken, updatePassword)
 //Routes liées aux CATEGORIES
 router.route('/api/categories')
     .post(addCategorie)
-    .get(verifyToken, getCategories)
+    .get(getCategories)
 router.route('/api/categorie/:id')
     .put(updateCategorie)
     .delete(deleteCategorie)
 
 
-
-
-
+//Routes liées aux MARQUES
+router.route('/api/marques')
+    .post(uploadSingle, addMarque)
+    .get(getMarques)
+router.route('/api/marque/:id')
+    .put(uploadSingle, updateMarque)
+    .delete(deleteMarque)
 
 
 
