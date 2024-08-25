@@ -22,5 +22,4 @@ connexion()
 
 app.listen(port, () => {
     console.log(`Notre serveur est executé sur http://localhost:${port}`);
-    console.log(path.join(__dirname, "src/uploads"));
 })

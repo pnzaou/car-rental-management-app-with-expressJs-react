@@ -8,7 +8,7 @@ const { addUser, getUsers, login, getUserDetails, deleteUser, updatePassword, to
 const { addCategorie, updateCategorie, getCategories, deleteCategorie } = require('../controllers/categorie.controller')
 const { addMarque, getMarques, deleteMarque, updateMarque } = require('../controllers/marque.controller')
 const { addModele, getModeles, updateModele, deleteModele } = require('../controllers/modele.controller')
-const { addVoiture, getVoitues } = require('../controllers/voiture.controller')
+const { addVoiture, getVoitues, updateVoiture, deleteVoiture } = require('../controllers/voiture.controller')
 
 //Routes liées aux DROITS
 router.route('/api/droits')
@@ -71,5 +71,9 @@ router.route('/api/modele/:id')
 router.route('/api/voitures')
     .post(uploadMultiple, addVoiture)
     .get(getVoitues)
+router.route('/api/voiture/:id')
+    .put(uploadMultiple, updateVoiture)
+    .delete(deleteVoiture)
+
 
 module.exports = router

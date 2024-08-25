@@ -1,17 +1,7 @@
 const Marque = require('../models/Marque.model')
-const fs = require('fs')
+const { deleteLogo } = require('../services')
 
-const deleteLogo = (file) => {
-    const fileArray = file.split('/')
-    const name = fileArray[fileArray.length - 1]
-    fs.unlink(`./src/uploads/${name}`, (err) => {
-        if(err) {
-            console.log('Erreur lors de la suppression du fichier:', err.message)
-            return
-        }
-        console.log('fichier supprimé avec succès.');
-    })
-}
+
 
 const addMarque = async (req, res) => {
     const {nom, paysDorigine} = req.body
