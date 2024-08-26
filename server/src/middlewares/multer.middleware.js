@@ -19,8 +19,13 @@ const storage = multer.diskStorage({
 
 const uploadSingle = multer({storage}).single('image')
 const uploadMultiple = multer({storage}).array('images')
+const uploadMultipleClient = multer({storage}).fields([
+    {name: 'photoPermis', maxCount: 1},
+    {name: 'photoCNI', maxCount: 1}
+])
 
 module.exports = {
     uploadSingle,
-    uploadMultiple
+    uploadMultiple,
+    uploadMultipleClient
 }

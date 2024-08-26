@@ -101,7 +101,7 @@ const deleteUser = async (req, res) => {
 }
 
 const updatePassword = async (req, res) => {
-    const {userId} =  req.userData
+    const {userId} =  req.authData
     const {password} = req.body
     try {
 

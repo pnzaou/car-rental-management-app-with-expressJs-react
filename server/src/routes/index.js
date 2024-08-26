@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const verifyToken = require('../middlewares/verifyToken.middleware')
-const { uploadMultiple, uploadSingle } = require('../middlewares/multer.middleware')
+const { uploadMultiple, uploadSingle, uploadMultipleClient } = require('../middlewares/multer.middleware')
 const { addDroit, getDroits, updateDroit, deleteDroit } = require('../controllers/droit.controller')
 const { addProfil, getProfils, getProfilDetails, updateProfil, updateProfilDroits, deleteProfil } = require('../controllers/profil.controller')
 const { addUser, getUsers, login, getUserDetails, deleteUser, updatePassword, toggleUserState } = require('../controllers/user.controller')
@@ -9,6 +9,7 @@ const { addCategorie, updateCategorie, getCategories, deleteCategorie } = requir
 const { addMarque, getMarques, deleteMarque, updateMarque } = require('../controllers/marque.controller')
 const { addModele, getModeles, updateModele, deleteModele } = require('../controllers/modele.controller')
 const { addVoiture, getVoitues, updateVoiture, deleteVoiture } = require('../controllers/voiture.controller')
+const { signUp, signIn } = require('../controllers/client.controller')
 
 //Routes liées aux DROITS
 router.route('/api/droits')
@@ -30,7 +31,7 @@ router.route('/api/profil/:id')
    
 
 //Routes liées aux USERS
-router.post('/api/login', login)
+router.post('/api/user/login', login)
 router.route('/api/users')
     .post(addUser)
     .get(getUsers)
@@ -68,12 +69,19 @@ router.route('/api/modele/:id')
     .delete(deleteModele)
 
 
+//Routes liées aux VOITURES
 router.route('/api/voitures')
     .post(uploadMultiple, addVoiture)
     .get(getVoitues)
 router.route('/api/voiture/:id')
     .put(uploadMultiple, updateVoiture)
     .delete(deleteVoiture)
+
+
+//Routes liées aux CLIENTS
+router.post('/api/client/signin', signIn)
+router.route('/api/clients')
+    .post(uploadMultipleClient, signUp)
 
 
 module.exports = router
