@@ -9,7 +9,7 @@ const { addCategorie, updateCategorie, getCategories, deleteCategorie } = requir
 const { addMarque, getMarques, deleteMarque, updateMarque } = require('../controllers/marque.controller')
 const { addModele, getModeles, updateModele, deleteModele } = require('../controllers/modele.controller')
 const { addVoiture, getVoitues, updateVoiture, deleteVoiture } = require('../controllers/voiture.controller')
-const { signUp, signIn } = require('../controllers/client.controller')
+const { signUp, signIn, getClients, updateAcountDetails, changePassword } = require('../controllers/client.controller')
 
 //Routes liées aux DROITS
 router.route('/api/droits')
@@ -79,9 +79,12 @@ router.route('/api/voiture/:id')
 
 
 //Routes liées aux CLIENTS
-router.post('/api/client/signin', signIn)
 router.route('/api/clients')
     .post(uploadMultipleClient, signUp)
+    .get(getClients)
+router.post('/api/client/signin', signIn)
+router.post('/api/client/updateAcount', verifyToken, updateAcountDetails)
+router.patch('/api/client/changePassword', verifyToken, changePassword)
 
 
 module.exports = router

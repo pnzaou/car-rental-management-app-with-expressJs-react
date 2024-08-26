@@ -28,6 +28,18 @@ const signUp = async (req, res) => {
     }
 }
 
+const getClients = async (req, res) => {
+    try {
+        const rep = await Client.find()
+        const msg = "Clients récupérés avec succès"
+
+        return res.status(200).json({message: msg, data: rep})
+    } catch (error) {
+        const msg = "Erreur lors de la récupération"
+        return res.status(500).json({message: msg, erreur: error})
+    }
+}
+
 const signIn = async (req, res) => {
     const {email, password} = req.body
 
@@ -39,8 +51,8 @@ const signIn = async (req, res) => {
             if(!client.etat) {
                 return res.status(403).json({message: 'Votre compte a été suspendu !'})
             } else {
-                const verifyedPassword = await bcrycpt.compare(password, client.password)
-                if(!verifyedPassword) {
+                const verifiedPassword = await bcrycpt.compare(password, client.password)
+                if(!verifiedPassword) {
                     return res.status(404).json({message: 'Email ou mot de passe incorrect !'})
                 } else {
                     const secret = fs.readFileSync('./.meow/meowPr.pem')
@@ -63,8 +75,55 @@ const signIn = async (req, res) => {
     }
 }
 
+const updateAcountDetails = async (req, res) => {
+    const {clientId} = req.authData
+    const {nom, prenom, email, tel, numeroPermis, expirationPermis} = req.body
+    try {
+        const rep = await Client.findByIdAndUpdate(clientId, {
+            nom,
+            prenom,
+            email,
+            tel,
+            numeroPermis,
+            expirationPermis
+        }, {new: true})
+        const msg = "Votre compte a été mis à jour avec succès."
+        return res.status(200).json({message: msg, data: rep})
+    } catch (error) {
+        const msg = "Erreur lors de la mise à jour"
+        return res.status(500).json({message: msg, erreur: error})
+    }
+}
+
+const changePassword = async (req, res) => {
+    const {clientId} = req.authData
+    const {oldPassword, newPassword} = req.body
+    try {
+        const client = await Client.findById(clientId)
+        const veriviedPassword = await bcrycpt.compare(oldPassword, client.password)
+        if(!veriviedPassword){
+            return res.status(404).json({message: "L'ancien mot de passe que vous avez saisi est incorrect !"})
+        } else {
+            const tour = await bcrycpt.genSalt(10)
+            const hashedPassword = await bcrycpt.hash(newPassword, tour)
+            client.password = hashedPassword
+
+            const rep = await client.save()
+            const msg = "Votre mot de passe a été modifié avec succès"
+
+            return res.status(200).json({message: msg, data: rep})
+        }
+    } catch (error) {
+        const msg = "Erreur lors de la modification du mot de passe"
+        return res.status(500).json({message: msg, erreur: error})
+    }
+}
+
 
 module.exports = {
     signUp,
-    signIn
+    getClients,
+    signIn,
+    updateAcountDetails,
+    changePassword
 }
