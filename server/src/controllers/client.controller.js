@@ -3,6 +3,13 @@ const bcrycpt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const fs = require('fs')
 
+/**
+ * Inscription d'un nouveau client.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données du client créé.
+ */
 const signUp = async (req, res) => {
     const {nom, prenom, email, password, tel, numeroPermis, expirationPermis} = req.body
     const {photoPermis, photoCNI} = req.files
@@ -28,6 +35,13 @@ const signUp = async (req, res) => {
     }
 }
 
+/**
+ * Récupération de tous les clients.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données des clients récupérés.
+ */
 const getClients = async (req, res) => {
     try {
         const rep = await Client.find()
@@ -40,6 +54,13 @@ const getClients = async (req, res) => {
     }
 }
 
+/**
+ * Connexion d'un client existant.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et un token JWT si la connexion est réussie.
+ */
 const signIn = async (req, res) => {
     const {email, password} = req.body
 
@@ -75,6 +96,13 @@ const signIn = async (req, res) => {
     }
 }
 
+/**
+ * Mise à jour des détails du compte d'un client.
+ * @async
+ * @param {Object} req - L'objet de requête Express, contenant les données du client à mettre à jour.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données mises à jour du client.
+ */
 const updateAcountDetails = async (req, res) => {
     const {clientId} = req.authData
     const {nom, prenom, email, tel, numeroPermis, expirationPermis} = req.body
@@ -95,6 +123,13 @@ const updateAcountDetails = async (req, res) => {
     }
 }
 
+/**
+ * Modification du mot de passe du client.
+ * @async
+ * @param {Object} req - L'objet de requête Express, contenant l'ancien et le nouveau mot de passe.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message de succès ou d'erreur.
+ */
 const changePassword = async (req, res) => {
     const {clientId} = req.authData
     const {oldPassword, newPassword} = req.body
