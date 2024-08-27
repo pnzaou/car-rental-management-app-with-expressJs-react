@@ -10,6 +10,8 @@ const { addMarque, getMarques, deleteMarque, updateMarque } = require('../contro
 const { addModele, getModeles, updateModele, deleteModele } = require('../controllers/modele.controller')
 const { addVoiture, getVoitues, updateVoiture, deleteVoiture } = require('../controllers/voiture.controller')
 const { signUp, signIn, getClients, updateAcountDetails, changePassword } = require('../controllers/client.controller')
+const { addOption, getOptions, updateOption, deleteOption } = require('../controllers/optionDeLocation.controller')
+const { addUnite, getUnites, updateUnite, deleteUnite } = require('../controllers/uniteTarification.controller')
 
 //Routes liées aux DROITS
 router.route('/api/droits')
@@ -86,5 +88,22 @@ router.post('/api/client/signin', signIn)
 router.post('/api/client/updateAcount', verifyToken, updateAcountDetails)
 router.patch('/api/client/changePassword', verifyToken, changePassword)
 
+
+//Routes liées aux OPTIONS
+router.route('/api/options')
+    .post(addOption)
+    .get(getOptions)
+router.route('/api/option/:id')
+    .put(updateOption)
+    .delete(deleteOption)
+
+
+//Routes liées aux UNITES
+router.route('/api/unites')
+    .post(addUnite)
+    .get(getUnites)
+router.route('/api/unite/:id')
+    .put(updateUnite)
+    .delete(deleteUnite)
 
 module.exports = router
