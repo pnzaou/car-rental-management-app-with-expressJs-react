@@ -1,4 +1,6 @@
 const Voiture = require('../models/Voiture.model')
+const VUT = require('../models/voitureUniteTarification.model')
+const VOL = require('../models/voitureOptionLocation.model')
 const { deleteLogo } = require('../services')
 
 const addVoiture = async (req, res) => {
@@ -8,12 +10,15 @@ const addVoiture = async (req, res) => {
         typeCarburant, 
         capaciteDassise, 
         categorieId, 
-        modeleId 
+        modeleId,
+        selectedOptions,
+        uniteTarificationId,
+        tarifLocation
     } = req.body
 
     const images = req.files.map(image => `${req.protocol}://${req.get('host')}/uploads/${image.filename}`)
     try {
-        const rep = await Voiture.create({
+        const voiture = await Voiture.create({
             immatriculation,
             images,
             DateMiseCirculation,
@@ -22,14 +27,28 @@ const addVoiture = async (req, res) => {
             categorieId,
             modeleId
         })
+
+        const rep1 = await VUT.create({uniteTarificationId, tarifLocation})
+
+        const optionPromises = JSON.parse(selectedOptions).map(option => {
+            return VOL.create({
+                tarifOption: option.tarifOption,
+                voitureId: voiture._id,
+                optionLocationId: option.optionLocationId
+            })
+        })
+
+        const rep2 = await Promise.all(optionPromises)
+        
+        console.log(rep1, rep2);
+
         const msg = "Voiture enregistrée avec succès"
-        return res.status(201).json({message: msg, data: rep})
+        return res.status(201).json({message: msg, data: voiture})
     } catch (error) {
         const msg ="Erreur lors de l'enregistrement"
         return res.status(500).json({message: msg, erreur: error})
     }   
 }
-
 
 const getVoitues = async (req, res) => {
     try {
@@ -41,7 +60,6 @@ const getVoitues = async (req, res) => {
         return res.status(500).json({message: msg, erreur: error})
     }
 }
-
 
 const updateVoiture = async (req, res) => {
     const { id } = req.params
