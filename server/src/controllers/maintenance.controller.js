@@ -20,7 +20,7 @@ const addMaintenance = async (req, res) => {
     }
 }
 
-const getMaintenance = async (req, res) => {
+const getMaintenances = async (req, res) => {
     try {
         const rep = await Maintenance.find()
         const msg = "Maintenances récupérées avec succès"
@@ -62,7 +62,7 @@ const deleteMaintenance = async (req, res) => {
 
 module.exports = {
     addMaintenance,
-    getMaintenance,
+    getMaintenances,
     updateMaintenance,
     deleteMaintenance
 }
