@@ -13,6 +13,7 @@ const { signUp, signIn, getClients, updateAcountDetails, changePassword } = requ
 const { addOption, getOptions, updateOption, deleteOption } = require('../controllers/optionDeLocation.controller')
 const { addUnite, getUnites, updateUnite, deleteUnite } = require('../controllers/uniteTarification.controller')
 const { addMaintenance, getMaintenances, updateMaintenance, deleteMaintenance } = require('../controllers/maintenance.controller')
+const { addCharge, getCharges, updateCharge, deleteCharge } = require('../controllers/charge.controller')
 
 //Routes liées aux DROITS
 router.route('/api/droits')
@@ -107,6 +108,7 @@ router.route('/api/unite/:id')
     .put(updateUnite)
     .delete(deleteUnite)
 
+    
 //Routes liées aux MAINTENANCES
 router.route('/api/maintenances')
     .post(addMaintenance)
@@ -114,5 +116,14 @@ router.route('/api/maintenances')
 router.route('/api/maintenance/:id')
     .put(updateMaintenance)
     .delete(deleteMaintenance)
+
+
+//Routes liées aux CHARGES
+router.route('/api/charges')
+    .post(addCharge)
+    .get(getCharges)
+router.route('/api/charge/:id')
+    .put(updateCharge)
+    .delete(deleteCharge)
 
 module.exports = router
