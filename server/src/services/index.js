@@ -1,4 +1,5 @@
 const fs = require('fs')
+const nodemailer = require('nodemailer')
 
 const deleteLogo = (file) => {
     const fileArray = file.split('/')
@@ -12,6 +13,16 @@ const deleteLogo = (file) => {
     })
 }
 
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'perrinemmanuelnzaou@gmail.com',
+    pass: 'plorvjvqayyjuuhq',
+  },
+});
+
+
 module.exports = {
-    deleteLogo
+    deleteLogo,
+    transporter
 }

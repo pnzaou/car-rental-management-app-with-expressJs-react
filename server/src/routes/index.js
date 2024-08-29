@@ -14,6 +14,7 @@ const { addOption, getOptions, updateOption, deleteOption } = require('../contro
 const { addUnite, getUnites, updateUnite, deleteUnite } = require('../controllers/uniteTarification.controller')
 const { addMaintenance, getMaintenances, updateMaintenance, deleteMaintenance } = require('../controllers/maintenance.controller')
 const { addCharge, getCharges, updateCharge, deleteCharge } = require('../controllers/charge.controller')
+const { sendNotification, getNotifications } = require('../controllers/notification.controller')
 
 //Routes liées aux DROITS
 router.route('/api/droits')
@@ -125,5 +126,12 @@ router.route('/api/charges')
 router.route('/api/charge/:id')
     .put(updateCharge)
     .delete(deleteCharge)
+
+
+//Routes liées aux NOTIFICATIONS
+router.route('/api/notifications')
+    .post(verifyToken, sendNotification)
+    .get(getNotifications)
+
 
 module.exports = router
