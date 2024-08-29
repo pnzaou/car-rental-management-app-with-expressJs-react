@@ -6,6 +6,7 @@ const reservationModel = new Schema({
     dateFin: {type: Date, required: true},
     montantTotal: {type: Number, required: true},
     statut: {type: String, required: true},
+    etoile: {type: Number, default: null},
     clientId: {type: Schema.Types.ObjectId, ref: 'Client'}
 },{timestamps: true})
 

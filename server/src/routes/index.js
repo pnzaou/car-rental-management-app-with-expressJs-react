@@ -15,6 +15,7 @@ const { addUnite, getUnites, updateUnite, deleteUnite } = require('../controller
 const { addMaintenance, getMaintenances, updateMaintenance, deleteMaintenance } = require('../controllers/maintenance.controller')
 const { addCharge, getCharges, updateCharge, deleteCharge } = require('../controllers/charge.controller')
 const { sendNotification, getNotifications } = require('../controllers/notification.controller')
+const { addFavori, getFavoris, deleteFavori } = require('../controllers/favori.controller')
 
 //Routes liées aux DROITS
 router.route('/api/droits')
@@ -132,6 +133,13 @@ router.route('/api/charge/:id')
 router.route('/api/notifications')
     .post(verifyToken, sendNotification)
     .get(getNotifications)
+
+
+//Routes liées aux FAVORIS
+router.get('/api/favoris', verifyToken, getFavoris)
+router.route('/api/favori/:id')
+    .post(verifyToken, addFavori)  
+    .delete(verifyToken, deleteFavori)
 
 
 module.exports = router
