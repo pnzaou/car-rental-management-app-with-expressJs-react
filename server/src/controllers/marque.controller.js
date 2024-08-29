@@ -1,8 +1,13 @@
 const Marque = require('../models/Marque.model')
 const { deleteLogo } = require('../services')
 
-
-
+/**
+ * Ajoute une nouvelle marque avec un logo.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données de la marque ajoutée.
+ */
 const addMarque = async (req, res) => {
     const {nom, paysDorigine} = req.body
     try {
@@ -19,6 +24,13 @@ const addMarque = async (req, res) => {
     }
 }
 
+/**
+ * Récupère toutes les marques enregistrées.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données des marques.
+ */
 const getMarques = async (req, res) => {
     try {
         const rep = await Marque.find()
@@ -30,6 +42,13 @@ const getMarques = async (req, res) => {
     }
 }
 
+/**
+ * Supprime une marque par son identifiant, et supprime également le logo associé.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données de la marque supprimée.
+ */
 const deleteMarque = async (req, res) => {
     const { id } = req.params
     try {
@@ -48,6 +67,13 @@ const deleteMarque = async (req, res) => {
     }
 }
 
+/**
+ * Met à jour les informations d'une marque existante, y compris son logo si un nouveau fichier est fourni.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données de la marque mise à jour.
+ */
 const updateMarque = async (req, res) => {
     const { id } = req.params
     const { nom, paysDorigine } = req.body

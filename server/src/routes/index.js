@@ -67,10 +67,9 @@ router.route('/api/marque/:id')
 
 
 //Routes liées aux MODELES
-router.route('/api/modeles')
-    .post(addModele)
-    .get(getModeles)
-router.route('/api/modele/:id')
+router.post('/api/modeles', addModele)
+router.get('/api/modeles/:idMarque', getModeles)
+router.route('/api/modele/:idMarque/:id')
     .put(updateModele)
     .delete(deleteModele)
 

@@ -3,6 +3,17 @@ const Client = require('../models/Client.model')
 const ClientNotification = require('../models/ClientNotification.model')
 const { transporter } = require('../services/index')
 
+/**
+ * Configure et envoie des emails aux clients spécifiés.
+ * @async
+ * @param {string} userId - L'identifiant de l'utilisateur qui envoie la notification.
+ * @param {string|string[]} clientIds - Identifiant(s) du ou des clients à qui envoyer la notification, ou "all" pour tous les clients.
+ * @param {Object} notificationData - Les données de la notification.
+ * @param {string} notificationData.titre - Le titre de la notification.
+ * @param {string} notificationData.contenu - Le contenu de la notification.
+ * @param {string} notificationData.type - Le type de la notification.
+ * @returns {Promise<void>} Renvoie une réponse JSON après l'envoi des emails et la création des notifications.
+ */
 const mailConfig = async (userId, clientIds, notificationData) => {
     try {
         let clients
@@ -47,6 +58,13 @@ const mailConfig = async (userId, clientIds, notificationData) => {
     }
 }
 
+/**
+ * Envoie une notification à un ou plusieurs clients.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message de succès ou d'erreur.
+ */
 const sendNotification = async (req, res) => {
     const {userId} =  req.authData
     const { clientIds, type, titre, contenu } = req.body
@@ -59,6 +77,13 @@ const sendNotification = async (req, res) => {
     }
 }
 
+/**
+ * Récupère toutes les notifications.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec les notifications récupérées.
+ */
 const getNotifications = async (req, res) => {
     try {
         const rep = await Notification.find()
@@ -69,6 +94,7 @@ const getNotifications = async (req, res) => {
         return res.status(500).json({message: msg, Erreur: error})
     }
 }
+
 module.exports = {
     sendNotification,
     getNotifications

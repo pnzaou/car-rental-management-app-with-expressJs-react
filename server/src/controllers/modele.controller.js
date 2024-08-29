@@ -1,5 +1,12 @@
 const Modele = require('../models/Modele.model')
 
+/**
+ * Ajoute un nouveau modèle.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données du modèle ajouté.
+ */
 const addModele = async (req, res) => {
     const {nom, description, marqueId} = req.body
     try {
@@ -12,9 +19,17 @@ const addModele = async (req, res) => {
     }
 }
 
+/**
+ * Récupère les modèles d'une marque spécifique.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données des modèles récupérés.
+ */
 const getModeles = async (req, res) => {
+    const {idMarque} = req.params
     try {
-        const rep = await Modele.find()
+        const rep = await Modele.find({marqueId: idMarque})
         const msg = "Modèles récupérés avec succès"
         return res.status(200).json({message: msg, data: rep})
     } catch (error) {
@@ -23,6 +38,13 @@ const getModeles = async (req, res) => {
     }
 }
 
+/**
+ * Met à jour un modèle existant par son identifiant.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données du modèle mis à jour.
+ */
 const updateModele = async (req, res) => {
     const { id } = req.params
     const {nom, description, marqueId} = req.body
@@ -36,6 +58,13 @@ const updateModele = async (req, res) => {
     }
 }
 
+/**
+ * Supprime un modèle par son identifiant.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données du modèle supprimé.
+ */
 const deleteModele = async (req, res) => {
     const { id } = req.params
     try {
