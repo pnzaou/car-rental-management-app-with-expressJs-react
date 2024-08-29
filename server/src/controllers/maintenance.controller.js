@@ -1,5 +1,12 @@
 const Maintenance = require('../models/Maintenance.model')
 
+/**
+ * Ajoute une nouvelle maintenance pour une voiture.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données de la maintenance ajoutée.
+ */
 const addMaintenance = async (req, res) => {
     const {type, date, description, statut, voitureId} = req.body
 
@@ -20,9 +27,17 @@ const addMaintenance = async (req, res) => {
     }
 }
 
+/**
+ * Récupère toutes les maintenances enregistrées pour une voiture spécifique.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données des maintenances.
+ */
 const getMaintenances = async (req, res) => {
+    const {idVoiture} = req.params
     try {
-        const rep = await Maintenance.find()
+        const rep = await Maintenance.find({voitureId: idVoiture})
         const msg = "Maintenances récupérées avec succès"
 
         return res.status(200).json({message: msg, data: rep})
@@ -32,6 +47,13 @@ const getMaintenances = async (req, res) => {
     }
 }
 
+/**
+ * Met à jour une maintenance existante.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données de la maintenance mise à jour.
+ */
 const updateMaintenance = async (req, res) => {
     const {id} = req.params
     const {type, date, description, statut, voitureId} = req.body
@@ -47,6 +69,13 @@ const updateMaintenance = async (req, res) => {
     }
 }
 
+/**
+ * Supprime une maintenance existante.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données de la maintenance supprimée.
+ */
 const deleteMaintenance = async (req, res) => {
     const {id} = req.params
     try {

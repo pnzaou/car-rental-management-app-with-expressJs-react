@@ -112,10 +112,9 @@ router.route('/api/unite/:id')
 
     
 //Routes liées aux MAINTENANCES
-router.route('/api/maintenances')
-    .post(addMaintenance)
-    .get(getMaintenances)
-router.route('/api/maintenance/:id')
+router.post('/api/maintenances', addMaintenance)
+router.get('/api/maintenances/:idVoiture', getMaintenances)
+router.route('/api/maintenance/:idVoiture/:id')
     .put(updateMaintenance)
     .delete(deleteMaintenance)
 

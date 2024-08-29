@@ -1,5 +1,12 @@
 const EtatVoiture = require('../models/EtatVoiture.model')
 
+/**
+ * Ajoute un nouvel état de voiture.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données de l'état de la voiture ajouté.
+ */
 const addEtatVoiture = async (req, res) => {
     const { 
             peinture, 
@@ -44,6 +51,13 @@ const addEtatVoiture = async (req, res) => {
     }
 }
 
+/**
+ * Récupère l'état de la voiture pour une réservation spécifique.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données de l'état de la voiture.
+ */
 const getEtatVoiture = async (req, res) => {
     const { id } = req.params
     try {
@@ -56,6 +70,13 @@ const getEtatVoiture = async (req, res) => {
     }
 }
 
+/**
+ * Met à jour l'état de la voiture.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données de l'état de la voiture mis à jour.
+ */
 const updateEtatVoiture = async (req, res) => {
     const { id } = req.params
     const { 
@@ -99,6 +120,13 @@ const updateEtatVoiture = async (req, res) => {
     }
 }
 
+/**
+ * Supprime l'état de la voiture.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données de l'état de la voiture supprimé.
+ */
 const deleteEtatVoiture = async (req, res) => {
     const { id } = req.params
     try {

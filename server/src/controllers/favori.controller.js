@@ -1,5 +1,12 @@
 const Favori = require('../models/Favori.model')
 
+/**
+ * Ajoute une voiture aux favoris du client.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données du favori ajouté.
+ */
 const addFavori = async (req, res) => {
     const { id } = req.params
     const {clientId} = req.authData
@@ -15,7 +22,13 @@ const addFavori = async (req, res) => {
     }
 }
 
-
+/**
+ * Récupère la liste des voitures favorites d'un client.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données des favoris.
+ */
 const getFavoris = async (req, res) => {
     const {clientId} = req.authData
     try {
@@ -28,6 +41,13 @@ const getFavoris = async (req, res) => {
     }
 }
 
+/**
+ * Supprime une voiture des favoris du client.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données du favori supprimé.
+ */
 const deleteFavori = async (req, res) => {
     const {clientId} = req.authData
     const { id } = req.params
