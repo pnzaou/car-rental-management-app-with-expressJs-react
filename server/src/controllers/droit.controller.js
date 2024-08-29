@@ -1,6 +1,12 @@
 const Droit = require('../models/Droit.model')
 
-
+/**
+ * Ajout d'un nouveau droit.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données du droit ajouté.
+ */
 const addDroit = async (req, res) => {
     const { autorisation } = req.body
     try {
@@ -13,6 +19,13 @@ const addDroit = async (req, res) => {
     }
 }
 
+/**
+ * Récupération de tous les droits.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données des droits récupérés.
+ */
 const getDroits = async (req, res) => {
     try {
         const rep = await Droit.find()
@@ -24,6 +37,13 @@ const getDroits = async (req, res) => {
     }
 }
 
+/**
+ * Mise à jour d'un droit existant.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données du droit mis à jour.
+ */
 const updateDroit = async (req, res) => {
     const {autorisation } = req.body
     const id = req.params.id
@@ -38,6 +58,13 @@ const updateDroit = async (req, res) => {
 
 }
 
+/**
+ * Suppression d'un droit.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données du droit supprimé.
+ */
 const deleteDroit = async (req, res) => {
     const id = req.params.id
     try {

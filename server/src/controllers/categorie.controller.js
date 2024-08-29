@@ -1,5 +1,12 @@
 const Categorie = require('../models/Categorie.model')
 
+/**
+ * Ajout d'une nouvelle catégorie.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données de la catégorie ajoutée.
+ */
 const addCategorie = async (req, res) => {
     const { nom, description } = req.body
 
@@ -14,6 +21,13 @@ const addCategorie = async (req, res) => {
     }
 }
 
+/**
+ * Mise à jour d'une catégorie existante.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données de la catégorie mise à jour.
+ */
 const updateCategorie = async (req, res) => {
     const { id } = req.params
     const { nom, description } = req.body
@@ -29,6 +43,13 @@ const updateCategorie = async (req, res) => {
     }
 }
 
+/**
+ * Récupération de toutes les catégories.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données des catégories récupérées.
+ */
 const getCategories = async (req, res) => {
     try {
         const rep = await Categorie.find()
@@ -40,6 +61,13 @@ const getCategories = async (req, res) => {
     }
 }
 
+/**
+ * Suppression d'une catégorie.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données de la catégorie supprimée.
+ */
 const deleteCategorie = async (req, res) => {
     const { id } = req.params
     try {

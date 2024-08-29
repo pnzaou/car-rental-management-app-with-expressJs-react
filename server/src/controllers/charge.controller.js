@@ -1,5 +1,12 @@
 const Charge = require('../models/Charge.model')
 
+/**
+ * Ajout d'une nouvelle charge.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données de la charge ajoutée.
+ */
 const addCharge = async (req, res) => {
     const {type, montant, voitureId} = req.body
 
@@ -14,6 +21,13 @@ const addCharge = async (req, res) => {
     }
 }
 
+/**
+ * Récupération de toutes les charges.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données des charges récupérées.
+ */
 const getCharges = async (req, res) => {
     try {
         const rep = await Charge.find()
@@ -26,6 +40,13 @@ const getCharges = async (req, res) => {
     }
 }
 
+/**
+ * Mise à jour d'une charge existante.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données de la charge mise à jour.
+ */
 const updateCharge = async (req, res) => {
     const {id} = req.params
     const {type, montant, voitureId} = req.body
@@ -40,6 +61,13 @@ const updateCharge = async (req, res) => {
     }
 }
 
+/**
+ * Suppression d'une charge.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données de la charge supprimée.
+ */
 const deleteCharge = async (req, res) => {
     const {id} = req.params
     try {
