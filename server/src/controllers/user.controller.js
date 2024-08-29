@@ -4,6 +4,19 @@ const jwt = require('jsonwebtoken')
 const Profil = require('../models/Profil.model')
 const fs = require('fs')
 
+/**
+ * Crée un nouvel utilisateur avec un mot de passe haché.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @param {string} req.body.nom - Le nom de l'utilisateur.
+ * @param {string} req.body.prenom - Le prénom de l'utilisateur.
+ * @param {string} req.body.email - L'email de l'utilisateur.
+ * @param {string} req.body.telephone - Le numéro de téléphone de l'utilisateur.
+ * @param {string} req.body.password - Le mot de passe de l'utilisateur.
+ * @param {string} req.body.profilId - L'identifiant du profil de l'utilisateur.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message de succès ou d'erreur.
+ */
 const addUser = async (req, res) => {
     const {nom, prenom, email, telephone, password, profilId} = req.body
     try {
@@ -27,6 +40,13 @@ const addUser = async (req, res) => {
     }
 }
 
+/**
+ * Récupère tous les utilisateurs.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec la liste des utilisateurs récupérés.
+ */
 const getUsers = async (req, res) => {
     try {
         const rep = await User.find()
@@ -38,6 +58,15 @@ const getUsers = async (req, res) => {
     }
 }
 
+/**
+ * Connecte un utilisateur en vérifiant son email et mot de passe.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @param {string} req.body.email - L'email de l'utilisateur.
+ * @param {string} req.body.password - Le mot de passe de l'utilisateur.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message de succès et un token JWT ou un message d'erreur.
+ */
 const login = async (req, res) => {
     const { email, password } = req.body
     try {
@@ -73,6 +102,14 @@ const login = async (req, res) => {
     }
 }
 
+/**
+ * Récupère les détails d'un utilisateur spécifique.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @param {string} req.params.id - L'identifiant de l'utilisateur à récupérer.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec les détails de l'utilisateur récupéré.
+ */
 const getUserDetails = async (req, res) => {
     const { id } = req.params
     try {
@@ -88,6 +125,14 @@ const getUserDetails = async (req, res) => {
     }
 }
 
+/**
+ * Supprime un utilisateur spécifique.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @param {string} req.params.id - L'identifiant de l'utilisateur à supprimer.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message de succès ou d'erreur.
+ */
 const deleteUser = async (req, res) => {
     const { id } = req.params
     try {
@@ -100,6 +145,15 @@ const deleteUser = async (req, res) => {
     }
 }
 
+/**
+ * Met à jour le mot de passe d'un utilisateur.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @param {string} req.authData.userId - L'identifiant de l'utilisateur dont le mot de passe est mis à jour.
+ * @param {string} req.body.password - Le nouveau mot de passe de l'utilisateur.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message de succès ou d'erreur.
+ */
 const updatePassword = async (req, res) => {
     const {userId} =  req.authData
     const {password} = req.body
@@ -119,6 +173,14 @@ const updatePassword = async (req, res) => {
     }    
 }
 
+/**
+ * Bascule l'état d'un utilisateur entre actif et désactivé.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @param {string} req.params.id - L'identifiant de l'utilisateur dont l'état est modifié.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message de succès ou d'erreur.
+ */
 const toggleUserState = async (req, res) => {
     const { id } = req.params
     try {

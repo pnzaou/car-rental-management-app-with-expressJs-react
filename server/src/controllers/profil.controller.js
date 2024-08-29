@@ -2,6 +2,13 @@ const Droit = require('../models/Droit.model')
 const Profil = require('../models/Profil.model')
 const ProfilDroit = require('../models/ProfilDroit.model')
 
+/**
+ * Ajoute un nouveau profil et assigne des droits à ce profil.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message de succès ou d'erreur.
+ */
 const addProfil = async (req, res) => {
     const {nom, droitId} = req.body
     try {
@@ -18,6 +25,13 @@ const addProfil = async (req, res) => {
     }
 }
 
+/**
+ * Récupère tous les profils.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec la liste des profils récupérés.
+ */
 const getProfils = async (req, res) => {
     try {
         const rep = await Profil.find()
@@ -29,6 +43,14 @@ const getProfils = async (req, res) => {
     }
 }
 
+/**
+ * Récupère les détails d'un profil spécifique, y compris les droits associés.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @param {string} req.params.id - L'identifiant du profil à récupérer.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec les détails du profil et ses droits.
+ */
 const getProfilDetails = async (req, res) => {
     const { id } = req.params
     try {
@@ -48,6 +70,16 @@ const getProfilDetails = async (req, res) => {
     }
 }
 
+/**
+ * Met à jour les droits associés à un profil.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @param {Function} next - La fonction middleware suivante.
+ * @param {string} req.params.id - L'identifiant du profil à mettre à jour.
+ * @param {Array<string>} req.body.droitId - Liste des identifiants de droits à associer au profil.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message de succès ou d'erreur.
+ */
 const updateProfilDroits = async (req, res, next) => {
     const { id } = req.params
     const {droitId} = req.body
@@ -85,6 +117,15 @@ const updateProfilDroits = async (req, res, next) => {
     }
 }
 
+/**
+ * Met à jour les informations d'un profil.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @param {string} req.params.id - L'identifiant du profil à mettre à jour.
+ * @param {string} req.body.nom - Le nouveau nom du profil.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec le profil mis à jour ou un message d'erreur.
+ */
 const updateProfil = async (req, res) => {
     const { id } = req.params
     const { nom } = req.body
@@ -101,6 +142,14 @@ const updateProfil = async (req, res) => {
     }
 }
 
+/**
+ * Supprime un profil et tous les droits associés à ce profil.
+ * @async
+ * @param {Object} req - L'objet de requête Express.
+ * @param {Object} res - L'objet de réponse Express.
+ * @param {string} req.params.id - L'identifiant du profil à supprimer.
+ * @returns {Promise<void>} Renvoie une réponse JSON avec un message de succès ou d'erreur.
+ */
 const deleteProfil = async (req, res) => {
     const { id } = req.params
     
