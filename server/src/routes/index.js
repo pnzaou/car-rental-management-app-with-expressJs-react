@@ -41,11 +41,12 @@ router.post('/api/user/login', login)
 router.route('/api/users')
     .post(addUser)
     .get(getUsers)
+router.patch('/api/user/password', verifyToken, updatePassword)
 router.route('/api/user/:id')
     .get(getUserDetails)
     .delete(deleteUser)
     .patch(toggleUserState)
-router.patch('/api/user/password', verifyToken, updatePassword)
+
 
 
 //Routes liées aux CATEGORIES
