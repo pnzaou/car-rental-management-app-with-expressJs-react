@@ -10,10 +10,14 @@ const LoginForm = ({url}) => {
   const verif = url
   const mdpRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/
   const emailRegex = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/
+  let apiUrl = null
 
   const onSubmit = async (data) => {
     try {
-      const rep = await axios.post('http://localhost:5000/api/user/login', data)
+      verif.includes("authentification")? 
+      apiUrl = "http://localhost:5000/api/client/signin" 
+      : apiUrl = "http://localhost:5000/api/user/login";
+      const rep = await axios.post(apiUrl, data)
       console.log(rep)
       toast.success(rep.data.message)
     } catch (error) {
@@ -122,3 +126,5 @@ LoginForm.propTypes = {
 }
 
 export default LoginForm
+
+
