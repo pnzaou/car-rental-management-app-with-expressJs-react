@@ -67,23 +67,25 @@ const signIn = async (req, res) => {
     try {
         const client = await Client.findOne({email: email})
         if(!client) {
-            return res.status(404).json({message: 'Email ou mot de passe incorrect !'})
+            return res.status(401).json({message: 'Email ou mot de passe incorrect !'})
         } else {
             if(!client.etat) {
                 return res.status(403).json({message: 'Votre compte a été suspendu !'})
             } else {
                 const verifiedPassword = await bcrycpt.compare(password, client.password)
                 if(!verifiedPassword) {
-                    return res.status(404).json({message: 'Email ou mot de passe incorrect !'})
+                    return res.status(401).json({message: 'Email ou mot de passe incorrect !'})
                 } else {
                     const secret = fs.readFileSync('./.meow/meowPr.pem')
                     const token = jwt.sign(
                         {
                             clientId: client._id,
                             clientEmail: client.email,
+                            clientNom: client.nom,
+                            clientPrenom: client.prenom,
                             clientProfil: client.profil
                         }, 
-                        secret, {expiresIn: '4h', algorithm: "RS256"}
+                        secret, {expiresIn: '1h', algorithm: "RS256"}
                     )
                     const msg = 'Connexion réussie'
                     return res.status(200).json({message: msg, token: token})

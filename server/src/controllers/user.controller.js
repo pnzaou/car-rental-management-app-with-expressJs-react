@@ -72,21 +72,25 @@ const login = async (req, res) => {
     try {
         const user = await User.findOne({email})
         if(!user) {
-            return res.status(404).json({message: 'Email ou mot de passe incorrect'})
+            return res.status(401).json({message: 'Email ou mot de passe incorrect'})
         } else {
             if(!user.etat) {
                 return res.status(403).json({message: "Votre compte est désactivé!"})
             } else {
                 const verifiedPassword = await bcrypt.compare(password, user.password)
                 if(!verifiedPassword) {
-                    return res.status(404).json({message: 'Email ou mot de passe incorrect'})
+                    return res.status(401).json({message: 'Email ou mot de passe incorrect'})
                 } else {
+                    const profil = await Profil.findById(user.profilId)
                     const secret = fs.readFileSync('./.meow/meowPr.pem')
                     const token = jwt.sign(
                         {
                             userId: user._id,
                             userEmail: email,
-                            userProfil: user.profilId
+                            userNom: user.nom,
+                            userPrenom: user.prenom,
+                            userProfil: profil.nom,
+                            profilId: user.profilId
                         },
                         secret, {expiresIn: '4h', algorithm: "RS256"}
                     )

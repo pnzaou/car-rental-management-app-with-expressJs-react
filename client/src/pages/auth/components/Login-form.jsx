@@ -1,12 +1,16 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useContext } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import {useForm} from "react-hook-form"
 import axios from 'axios'
 import toast from 'react-hot-toast'
+import { jwtDecode } from 'jwt-decode'
+import TokenContext from '../../../contexts/token.context'
 
 const LoginForm = ({url}) => {
+  const { login } = useContext(TokenContext)
   const {register, handleSubmit, formState: {errors}} = useForm()
+  const navigate = useNavigate()
   const verif = url
   const mdpRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/
   const emailRegex = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/
@@ -18,8 +22,10 @@ const LoginForm = ({url}) => {
       apiUrl = "http://localhost:5000/api/client/signin" 
       : apiUrl = "http://localhost:5000/api/user/login";
       const rep = await axios.post(apiUrl, data)
-      console.log(rep)
       toast.success(rep.data.message)
+      console.log(jwtDecode(rep.data.token));
+      navigate('/')
+      login(rep.data.token)
     } catch (error) {
       console.log(error)
       toast.error(error.response.data.message)
@@ -39,7 +45,7 @@ const LoginForm = ({url}) => {
           <p className="text-xl text-gray-600 text-center">Content de vous revoir !</p>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mt-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
+              <label className="block text-gray-600 text-sm font-bold mb-2">
                 Votre Email
               </label>
               <input
@@ -62,7 +68,7 @@ const LoginForm = ({url}) => {
             </div>
             <div className="mt-4 flex flex-col justify-between">
               <div className="flex justify-between">
-                <label className="block text-gray-700 text-sm font-bold mb-2">
+                <label className="block text-gray-600 text-sm font-bold mb-2">
                   Votre Mot de Passe
                 </label>
               </div>
