@@ -24,8 +24,8 @@ const LoginForm = ({url}) => {
       const rep = await axios.post(apiUrl, data)
       toast.success(rep.data.message)
       console.log(jwtDecode(rep.data.token));
-      navigate('/')
       login(rep.data.token)
+      verif.includes("authentification") ? navigate("/") : navigate("/members-dashboard")
     } catch (error) {
       console.log(error)
       toast.error(error.response.data.message)

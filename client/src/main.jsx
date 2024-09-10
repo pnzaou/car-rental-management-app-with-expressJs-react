@@ -10,13 +10,14 @@ import MembersLogin from "./pages/auth/Members-login";
 import ClientLogin from "./pages/auth/Client-login";
 import { TokenContextProvider } from "./contexts/token.context";
 import ProtectedRoute from "./components/Protected-route";
+import MemberDashboard from "./pages/dashboards/members-dashbord/Member-dashboard";
 
 const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <TokenContextProvider><ProtectedRoute><App/></ProtectedRoute></TokenContextProvider>
+    element: <App/>
   },
   {
     path: "/members-login",
@@ -28,6 +29,13 @@ const router = createBrowserRouter([
   },
   {
     path: "/inscription"
+  },
+  {
+    path: "/members-dashboard",
+    element: <TokenContextProvider><ProtectedRoute><MemberDashboard/></ProtectedRoute></TokenContextProvider>,
+    children: [
+
+    ]
   },
   {
     path: "*",
