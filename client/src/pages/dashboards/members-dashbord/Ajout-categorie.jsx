@@ -1,4 +1,3 @@
-import React from 'react'
 import CategoryForm from './components/Category-form'
 import { Link } from 'react-router-dom'
 
