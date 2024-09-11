@@ -11,6 +11,10 @@ import ClientLogin from "./pages/auth/Client-login";
 import { TokenContextProvider } from "./contexts/token.context";
 import ProtectedRoute from "./components/Protected-route";
 import MemberDashboard from "./pages/dashboards/members-dashbord/Member-dashboard";
+import MemberDashboardHome from "./pages/dashboards/members-dashbord/Member-dashboard-home";
+import ListeCategorie from "./pages/dashboards/members-dashbord/Liste-categorie";
+import AjoutCategorie from "./pages/dashboards/members-dashbord/Ajout-categorie";
+import EditCategorie from "./pages/dashboards/members-dashbord/Edit-categorie";
 
 const queryClient = new QueryClient()
 
@@ -34,7 +38,22 @@ const router = createBrowserRouter([
     path: "/members-dashboard",
     element: <TokenContextProvider><ProtectedRoute><MemberDashboard/></ProtectedRoute></TokenContextProvider>,
     children: [
-
+      {
+        path: "",
+        element: <MemberDashboardHome/>
+      },
+      {
+        path: "categories",
+        element: <ListeCategorie/>
+      },
+      {
+        path: "categories/ajout",
+        element: <AjoutCategorie/>
+      },
+      {
+        path: "categories/modification/:id",
+        element: <EditCategorie/>
+      }
     ]
   },
   {
@@ -45,8 +64,9 @@ const router = createBrowserRouter([
 
 ReactDom.createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router}/>
-    <QueryClientProvider client={queryClient}/>
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router}/>
+    </QueryClientProvider>
     <Toaster/>
   </StrictMode>
 )

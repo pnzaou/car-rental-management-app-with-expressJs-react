@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import TokenContext from "../../../contexts/token.context";
 import PropTypes from "prop-types"
 
@@ -9,16 +9,33 @@ const NavBar = ({ toggleSidebar, isOpen }) => {
   const [theme, setTheme] = useState(
     localStorage.getItem("theme") ? localStorage.getItem("theme") : "light"
   );
-  const { token } = useContext(TokenContext);
+  const [navTheme, setNavTheme] = useState(
+    localStorage.getItem("theme") === "light" ? "bg-neutral-content" : "bg-neutral"
+  )
+  const { token, logout } = useContext(TokenContext);
   const { userNom, userPrenom } = jwtDecode(token);
 
   const handleToggle = (e) => {
     if (e.target.checked) {
       setTheme("dark");
+      setNavTheme("bg-neutral")
     } else {
       setTheme("light");
+      setNavTheme("bg-neutral-content")
     }
   };
+
+  console.log(navTheme);
+
+  const logOutService = () => {
+    const url = window.location.href
+    const rep = logout()
+    if(rep) {
+      localStorage.setItem("theme", "light")
+      document.querySelector("html").setAttribute("data-theme", "light")
+      return url.includes("members-dashboard") ? <Navigate to="/members-login"/> : <Navigate to="/authentification"/>
+    }
+  }
 
   useEffect(() => {
     localStorage.setItem("theme", theme);
@@ -30,7 +47,7 @@ const NavBar = ({ toggleSidebar, isOpen }) => {
   }, [theme]);
 
   return (
-    <div className={`navbar fixed top-0 left-0 z-10 bg-base-100 flex justify-between shadow-md ${isOpen ? "lg:ml-80" : "ml-0"}`}>
+    <div className={`navbar fixed top-0 left-0 z-10 flex justify-between shadow-md ${navTheme} ${isOpen ? "lg:ml-80" : "ml-0"}`}>
       <div className="flex-none">
         <button
           className="btn btn-square btn-ghost"
@@ -108,7 +125,7 @@ const NavBar = ({ toggleSidebar, isOpen }) => {
           </div>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+            className="menu menu-sm dropdown-content bg-base-500 rounded-box z-[1] mt-3 w-52 p-2 shadow"
           >
             <li>
               <Link>Mon profile</Link>
@@ -117,7 +134,7 @@ const NavBar = ({ toggleSidebar, isOpen }) => {
               <Link>Settings</Link>
             </li>
             <li>
-              <Link>Déconnexion</Link>
+              <button onClick={logOutService}>Déconnexion</button>
             </li>
           </ul>
         </div>

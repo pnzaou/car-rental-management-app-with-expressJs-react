@@ -61,6 +61,18 @@ const getCategories = async (req, res) => {
     }
 }
 
+const getCategorieById = async (req, res) => {
+    const {id} = req.params
+    try {
+        const rep = await Categorie.findById(id)
+        const msg = "La catégorie a été récupérée avec succèS"
+        return res.status(200).json({message: msg, data: rep})
+    } catch (error) {
+        const msg = "Erreur lors de la récupération"
+        return res.status(500).json({message: msg, erreur: error})
+    }
+}
+
 /**
  * Suppression d'une catégorie.
  * @async
@@ -84,5 +96,6 @@ module.exports = {
     addCategorie,
     updateCategorie,
     getCategories,
+    getCategorieById,
     deleteCategorie
 }
