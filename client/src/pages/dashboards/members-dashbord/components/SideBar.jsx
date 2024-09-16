@@ -28,14 +28,14 @@ const SideBar = ({ isOpen }) => {
             <li><Link to="#">Sidebar Item 3</Link></li>
             <hr className="my-2 border-gray-500" />
             <li className="dropdown dropdown-hover">
-              <label tabIndex={0} className="">Sidebar Item 4</label>
+              <label tabIndex={0} className="">Gestion des marques</label>
               <ul
                 tabIndex={0}
                 className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow mt-2 ml-20"
               >
-                <li><Link to="#">Sub-item A</Link></li>
+                <li><Link to="/members-dashboard/marques/ajout">Ajouter une marque</Link></li>
                 <hr className="my-2 border-gray-500" />
-                <li><Link to="#">Sub-item B</Link></li>
+                <li><Link to="/members-dashboard/marques">Lister les marques</Link></li>
               </ul>
             </li>
           </ul>

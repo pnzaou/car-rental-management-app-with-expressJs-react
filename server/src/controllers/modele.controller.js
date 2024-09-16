@@ -1,4 +1,5 @@
 const Modele = require('../models/Modele.model')
+const Voiture = require('../models/Voiture.model')
 
 /**
  * Ajoute un nouveau modèle.
@@ -69,6 +70,7 @@ const deleteModele = async (req, res) => {
     const { id } = req.params
     try {
         const rep = await Modele.findByIdAndDelete(id)
+        await Voiture.deleteMany({modeleId: rep._id})
         const msg = "Modèle supprimé avec succès"
         return res.status(200).json({message: msg, data: rep})
     } catch (error) {

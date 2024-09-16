@@ -15,6 +15,9 @@ import MemberDashboardHome from "./pages/dashboards/members-dashbord/Member-dash
 import ListeCategorie from "./pages/dashboards/members-dashbord/Liste-categorie";
 import AjoutCategorie from "./pages/dashboards/members-dashbord/Ajout-categorie";
 import EditCategorie from "./pages/dashboards/members-dashbord/Edit-categorie";
+import ListeMarque from "./pages/dashboards/members-dashbord/Liste-marque";
+import DetailsMarques from "./pages/dashboards/members-dashbord/details-marques";
+import AjoutMarque from "./pages/dashboards/members-dashbord/Ajout-marque";
 
 const queryClient = new QueryClient()
 
@@ -53,6 +56,18 @@ const router = createBrowserRouter([
       {
         path: "categories/modification/:id",
         element: <EditCategorie/>
+      },
+      {
+        path: "marques",
+        element: <ListeMarque/>
+      },
+      {
+        path: "marques/ajout",
+        element: <AjoutMarque/>
+      },
+      {
+        path: "marques/details/:id",
+        element: <DetailsMarques/>
       }
     ]
   },

@@ -4,14 +4,22 @@ import {useQuery} from "react-query"
 import {useNavigate, useParams} from "react-router-dom"
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useContext } from "react";
+import TokenContext from "../../../../contexts/token.context";
+
 
 const CategoryForm = ({isEdit, setTitle}) => {
 
+    const {token} = useContext(TokenContext)
     const {id} = useParams()
     const navigate = useNavigate()
     const {register, handleSubmit, formState: {errors}} = useForm()
     const {data, error, isLoading} = useQuery('catData', async () => {
-        const rep = await axios.get(`http://localhost:5000/api/categorie/${id}`)
+        const rep = await axios.get(`http://localhost:5000/api/categorie/${id}`,{
+            headers: {
+                Authorization: token
+            }
+        })
         return rep.data.data
     })
 
@@ -40,8 +48,16 @@ const CategoryForm = ({isEdit, setTitle}) => {
 
     const onSubmit = async (data) => {
         try {
-            const rep = isEdit ? await axios.put(`http://localhost:5000/api/categorie/${id}`, data) 
-            : await axios.post("http://localhost:5000/api/categories", data)
+            const rep = isEdit ? await axios.put(`http://localhost:5000/api/categorie/${id}`, data, {
+                headers: {
+                    Authorization: token
+                }
+            }) 
+            : await axios.post("http://localhost:5000/api/categories", data, {
+                headers: {
+                    Authorization: token
+                }
+            })
             navigate("/members-dashboard/categories")
             toast.success(rep.data.message, {
                 position: "bottom-right"

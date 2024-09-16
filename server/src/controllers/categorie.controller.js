@@ -53,7 +53,8 @@ const updateCategorie = async (req, res) => {
 const getCategories = async (req, res) => {
     try {
         const rep = await Categorie.find()
-        const msg = "Catégories récupérés avec succès."
+        const msg = rep.length === 0 ? "Aucune catégorie enregistrée veuillez en ajouter" 
+        : "Catégories récupérés avec succès."
         return res.status(200).json({message: msg, data: rep})
     } catch (error) {
         const msg = "Erreur lors de la récupération"

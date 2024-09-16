@@ -1,4 +1,5 @@
 const Marque = require('../models/Marque.model')
+const Modele = require('../models/Modele.model')
 const { deleteLogo } = require('../services')
 
 /**
@@ -34,7 +35,20 @@ const addMarque = async (req, res) => {
 const getMarques = async (req, res) => {
     try {
         const rep = await Marque.find()
-        const msg = "Marques récupérées avec succès"
+        const msg = rep.length === 0 ? "Aucune marque enregistrée veuillez en ajouter" 
+        : "Marques récupérées avec succès"
+        return res.status(200).json({message: msg, data: rep})
+    } catch (error) {
+        const msg = "Erreur lors de la récupération des données"
+        return res.status(500).json({message: msg, errerur: error})
+    }
+}
+
+const getMarqueById = async (req, res) => {
+    const {id} = req.params
+    try {
+        const rep = await Marque.findById(id)
+        const msg = "Détails de la marque récupérés avec succès"
         return res.status(200).json({message: msg, data: rep})
     } catch (error) {
         const msg = "Erreur lors de la récupération des données"
@@ -59,6 +73,7 @@ const deleteMarque = async (req, res) => {
         } catch (error) {
             console.log("Erreur lors de la suppression du logo précédent: ", error.message);
         }
+        const rep1 = await Modele.deleteMany({marqueId: rep._id})
         const msg = 'Marque supprimée avec succès'
         return res.status(200).json({message: msg, data: rep})
     } catch (error) {
@@ -112,6 +127,7 @@ const updateMarque = async (req, res) => {
 module.exports = {
     addMarque,
     getMarques,
+    getMarqueById,
     updateMarque,
     deleteMarque
 }

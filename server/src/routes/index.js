@@ -6,7 +6,7 @@ const { addDroit, getDroits, updateDroit, deleteDroit } = require('../controller
 const { addProfil, getProfils, getProfilDetails, updateProfil, updateProfilDroits, deleteProfil } = require('../controllers/profil.controller')
 const { addUser, getUsers, login, getUserDetails, deleteUser, updatePassword, toggleUserState } = require('../controllers/user.controller')
 const { addCategorie, updateCategorie, getCategories, deleteCategorie, getCategorieById } = require('../controllers/categorie.controller')
-const { addMarque, getMarques, deleteMarque, updateMarque } = require('../controllers/marque.controller')
+const { addMarque, getMarques, deleteMarque, updateMarque, getMarqueById } = require('../controllers/marque.controller')
 const { addModele, getModeles, updateModele, deleteModele } = require('../controllers/modele.controller')
 const { addVoiture, getVoitues, updateVoiture, deleteVoiture } = require('../controllers/voiture.controller')
 const { signUp, signIn, getClients, updateAcountDetails, changePassword } = require('../controllers/client.controller')
@@ -51,12 +51,12 @@ router.route('/api/user/:id')
 
 //Routes liées aux CATEGORIES
 router.route('/api/categories')
-    .post(addCategorie)
-    .get(getCategories)
+    .post(verifyToken, addCategorie)
+    .get(verifyToken, getCategories)
 router.route('/api/categorie/:id')
-    .get(getCategorieById)
-    .put(updateCategorie)
-    .delete(deleteCategorie)
+    .get(verifyToken, getCategorieById)
+    .put(verifyToken, updateCategorie)
+    .delete(verifyToken, deleteCategorie)
 
 
 //Routes liées aux MARQUES
@@ -64,6 +64,7 @@ router.route('/api/marques')
     .post(uploadSingle, addMarque)
     .get(getMarques)
 router.route('/api/marque/:id')
+    .get(getMarqueById)
     .put(uploadSingle, updateMarque)
     .delete(deleteMarque)
 
