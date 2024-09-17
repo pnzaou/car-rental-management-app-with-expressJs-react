@@ -6,14 +6,17 @@ import { Link } from 'react-router-dom'
 import TokenContext from "../../../contexts/token.context"
 
 const ListeCategorie = () => {
-    const [currentPage, setCurrentPage] =useState(1)
+    const [currentPage, setCurrentPage] = useState(1)
+    const [searchItem, setSearchItem] = useState("")
     const [idCat, setIdCat] = useState("")
     const catsParPage = 5
     const {token} = useContext(TokenContext)
 
-    const lastCat = currentPage * catsParPage
+    //premier et dernier element a afficher par page
+    const lastCat = currentPage * catsParPage 
     const firstCat = lastCat - catsParPage
 
+    //recuperation des categories
     const {data, error, isLoading, isFetched, refetch} = useQuery('catData', async () => {
         const rep = await axios.get("http://localhost:5000/api/categories",{
           headers: {
@@ -31,19 +34,19 @@ const ListeCategorie = () => {
         }
     })
 
-    const totalPages = data?.data ? Math.ceil(data.data.length / catsParPage) : 1;
-
+    //fonction de changement de page pour la pagination
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
       
-
+    //Render du loader si les donees sont en cours de recuperations 
     if(isLoading) return (
         <div className="flex justify-center items-center min-h-screen">
           <span className="loading loading-dots loading-lg"></span>
         </div>
     )
 
+    //Render du message d'erreur si il y a une erreur lors de la recuperation des donnees
     if (error) {
         return (
             <div className="text-center text-red-500">
@@ -52,6 +55,7 @@ const ListeCategorie = () => {
         );
     }
 
+    //suppression d'une categorie
     const deleteCat = async (id) => {
         try {
             const rep = await axios.delete(`http://localhost:5000/api/categorie/${id}`, {
@@ -73,18 +77,30 @@ const ListeCategorie = () => {
         }
     }
 
+    //affichage de l'arlete supression
     const showAlert = (id) => {
       document.querySelector(".alert-error").classList.remove("hidden")
       setIdCat(id)
     }
   
+    //masquer l'alerte supression
     const hiddenAlert = () => {
       document.querySelector(".alert-error").classList.add("hidden")
       setIdCat("")
     }
 
+    const filterCats = () => {
+      if(data?.data) {
+        return searchItem.length >= 2 ? data.data.filter(cat => cat.nom.toLowerCase().includes(searchItem.toLocaleLowerCase())) : data.data
+      }
+    }
+
+    //calcule du nombre total de page pour la pagination
+    const totalPages = data?.data ? Math.ceil(filterCats().length / catsParPage) : 1;
+
     return (
       <div>
+        {/* Alert de suppression */}
         <div role="alert" className="alert alert-error hidden">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -109,8 +125,26 @@ const ListeCategorie = () => {
         <div>
             <Link className="btn btn-accent absolute" to="/members-dashboard/categories/ajout">Ajouter</Link>
         </div>
+
         <div className="mt-16 overflow-x-auto flex justify-center">
           <div>
+            {/* Inupt de recherche */}
+            <div className="form-control mb-16 px-48">
+              <label className="input input-bordered flex items-center gap-2">
+                <input type="text" className="grow" placeholder="Rechercher..." value={searchItem} onChange={(e) => setSearchItem(e.target.value)}/>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 16 16"
+                    fill="currentColor"
+                    className="h-4 w-4 opacity-70">
+                    <path
+                      fillRule="evenodd"
+                      d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                      clipRule="evenodd" />
+                  </svg>
+              </label>
+            </div>
+
             <table className="table">
               {/* head */}
               <thead>
@@ -121,7 +155,7 @@ const ListeCategorie = () => {
                 </tr>
               </thead>
               <tbody>
-                {data?.data?.slice(firstCat, lastCat).map((cat) => (
+                {filterCats()?.slice(firstCat, lastCat).map((cat) => (
                   <tr key={cat._id} className="hover">
                     <td>{cat.nom}</td>
                     <td>
@@ -146,7 +180,7 @@ const ListeCategorie = () => {
         </div>
 
         {totalPages > 1 && (
-          <div className="flex justify-center mt-4">
+          <div className="flex justify-center mt-4 mb-10">
             <nav className="btn-group">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}

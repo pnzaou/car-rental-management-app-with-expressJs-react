@@ -1,10 +1,12 @@
 import axios from 'axios'
+import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useQuery } from 'react-query'
 import { Link, useParams } from 'react-router-dom'
 
 const DetailsMarques = () => {
-
+    const [currentPage, setCurrentPage] = useState(1)
+    const modsParpage = 5
     const {id} = useParams()
 
     const {data: dataMod, isLoading: loadingMod, isError: errorMod} = useQuery("modeleData", async () => {
@@ -13,6 +15,15 @@ const DetailsMarques = () => {
 
         return rep.data
     })
+
+    const totalPages = dataMod?.data ? Math.ceil(dataMod.data.length / modsParpage) : 1
+
+    const lastMod = currentPage * modsParpage
+    const firstMod = lastMod - modsParpage
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber)
+    }
 
     const {data, isLoading, isError, isFetched} = useQuery("marqueData", async () => {
         const rep = await axios.get(`http://localhost:5000/api/marque/${id}`)
@@ -56,7 +67,7 @@ const DetailsMarques = () => {
             <div className='text-center'>
                 <h1 className='text-2xl font-bold'>Détails de la marque</h1>
             </div>
-            <div>
+            <div className='mt-52'>
                 <h3>Les modèles liés à la marque {data?.data.nom}</h3>
                 {loadingMod? 
                     <div className="flex justify-center items-center min-h-screen">
@@ -80,7 +91,7 @@ const DetailsMarques = () => {
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {dataMod?.data?.map((cat) => (
+                                    {dataMod?.data?.slice(firstMod, lastMod).map((cat) => (
                                         <tr key={cat._id} className="hover">
                                         <td>{cat.nom}</td>
                                         <td>
@@ -109,6 +120,41 @@ const DetailsMarques = () => {
                         </div>
                     </div>
                 }
+                {totalPages > 1 && (
+                    <div className="flex justify-center mt-4">
+                        <nav className="btn-group">
+                        <button
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            className={`btn ${currentPage === 1 ? "btn-disabled" : ""} btn-sm mr-2`}
+                            disabled={currentPage === 1}
+                        >
+                            Précédent
+                        </button>
+
+                        {[...Array(totalPages)].map((_, index) => (
+                            <button
+                            key={index}
+                            onClick={() => handlePageChange(index + 1)}
+                            className={`btn ${
+                                currentPage === index + 1 ? "btn-active" : ""
+                            } btn-sm mr-1`}
+                            >
+                            {index + 1}
+                            </button>
+                        ))}
+
+                        <button
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            className={`btn ${
+                            currentPage === totalPages ? "btn-disabled" : ""
+                            } btn-sm ml-2`}
+                            disabled={currentPage === totalPages}
+                        >
+                            Suivant
+                        </button>
+                        </nav>
+                    </div>
+                )}
             </div>
         </div>
     );
