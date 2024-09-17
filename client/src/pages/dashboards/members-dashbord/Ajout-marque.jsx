@@ -15,7 +15,6 @@ export default function AjoutMarque() {
             formData.append("nom", data.nom);
             formData.append("paysDorigine", data.paysDorigine);
             formData.append("image", data.image[0]);
-            console.log(formData);
             const rep = await axios.post("http://localhost:5000/api/marques", formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -88,6 +87,11 @@ export default function AjoutMarque() {
                     required: true
                 })}
               />
+              {errors.nom && <span className="
+                            mt-2 text-sm text-red-500
+                        ">
+                            Champ requis! Ajouter le logo de la marque 
+                        </span>}
             </div>
 
             <div className="form-control mt-8">

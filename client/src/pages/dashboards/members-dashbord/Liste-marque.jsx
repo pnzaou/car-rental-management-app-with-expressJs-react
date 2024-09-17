@@ -9,7 +9,7 @@ const ListeMarque = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [searchItem, setSearchItem] = useState("")
   const [idMarque, setIdMarque] = useState("")
-  const marParPage = 5
+  const marParPage = 4
 
   const {data, isLoading, error, isFetched, refetch} = useQuery("marData", async () => {
     const rep = await axios.get("http://localhost:5000/api/marques")
@@ -78,7 +78,7 @@ const ListeMarque = () => {
 
   const filterMars = () => {
     if(data?.data) {
-      return searchItem.length >= 2 ? data.data.filter(mar => mar.nom.toLowerCase().includes(searchItem.toLocaleLowerCase())) : data.data
+      return searchItem.length >= 2 ? data.data.filter(mar => mar.nom.toLowerCase().includes(searchItem.toLowerCase())) : data.data
     }
   }
 
@@ -118,7 +118,7 @@ const ListeMarque = () => {
       <div className="mt-16 overflow-x-auto flex justify-center">
         <div>
 
-          <div className="form-control mb-16 px-48">
+          <div className="form-control mb-10 px-48">
             <label className="input input-bordered flex items-center gap-2">
               <input type="text" className="grow" placeholder="Rechercher..." value={searchItem} onChange={(e) => setSearchItem(e.target.value)}/>
               <svg

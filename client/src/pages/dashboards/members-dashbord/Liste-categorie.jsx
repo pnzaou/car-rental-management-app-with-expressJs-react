@@ -91,7 +91,7 @@ const ListeCategorie = () => {
 
     const filterCats = () => {
       if(data?.data) {
-        return searchItem.length >= 2 ? data.data.filter(cat => cat.nom.toLowerCase().includes(searchItem.toLocaleLowerCase())) : data.data
+        return searchItem.length >= 2 ? data.data.filter(cat => cat.nom.toLowerCase().includes(searchItem.toLowerCase())) : data.data
       }
     }
 
@@ -129,7 +129,7 @@ const ListeCategorie = () => {
         <div className="mt-16 overflow-x-auto flex justify-center">
           <div>
             {/* Inupt de recherche */}
-            <div className="form-control mb-16 px-48">
+            <div className="form-control mb-10 px-48">
               <label className="input input-bordered flex items-center gap-2">
                 <input type="text" className="grow" placeholder="Rechercher..." value={searchItem} onChange={(e) => setSearchItem(e.target.value)}/>
                 <svg
