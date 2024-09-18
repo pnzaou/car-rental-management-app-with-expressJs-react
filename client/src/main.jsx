@@ -18,6 +18,8 @@ import EditCategorie from "./pages/dashboards/members-dashbord/Edit-categorie";
 import ListeMarque from "./pages/dashboards/members-dashbord/Liste-marque";
 import DetailsMarques from "./pages/dashboards/members-dashbord/details-marques";
 import AjoutMarque from "./pages/dashboards/members-dashbord/Ajout-marque";
+import Settings from "./pages/dashboards/members-dashbord/Settings";
+import AccountSettings from "./pages/dashboards/components/Account-settings";
 
 const queryClient = new QueryClient()
 
@@ -68,6 +70,16 @@ const router = createBrowserRouter([
       {
         path: "marques/details/:id",
         element: <DetailsMarques/>
+      }
+    ]
+  },
+  {
+    path: "/members-dashboard/settings",
+    element: <TokenContextProvider><ProtectedRoute><Settings/></ProtectedRoute></TokenContextProvider>,
+    children: [
+      {
+        path: "",
+        element: <AccountSettings/>
       }
     ]
   },

@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { Link, Navigate } from "react-router-dom";
 import TokenContext from "../../../contexts/token.context";
 import PropTypes from "prop-types"
 
-const NavBar = ({ toggleSidebar, isOpen }) => {
+const NavBar = ({ toggleSidebar, isOpen, isDash }) => {
 
   const [theme, setTheme] = useState(
     localStorage.getItem("theme") ? localStorage.getItem("theme") : "light"
@@ -49,7 +49,7 @@ const NavBar = ({ toggleSidebar, isOpen }) => {
   return (
     <div className={`navbar fixed top-0 left-0 z-10 flex justify-between shadow-md ${navTheme} ${isOpen ? "lg:ml-80" : "ml-0"}`}>
       <div className="flex-none">
-        <button
+        {isDash && <button
           className="btn btn-square btn-ghost"
           onClick={toggleSidebar}
         >
@@ -67,7 +67,7 @@ const NavBar = ({ toggleSidebar, isOpen }) => {
               d="M4 6h16M4 12h16m-7 6h7"
             />
           </svg>
-        </button>
+        </button>}
       </div>
       <div className={`flex-none gap-4 ${isOpen ? "lg:pr-80" : "pl-0"}`}>
         <div className="pt-1">
@@ -128,10 +128,7 @@ const NavBar = ({ toggleSidebar, isOpen }) => {
             className="menu menu-sm dropdown-content bg-base-500 rounded-box z-[1] mt-3 w-52 p-2 shadow"
           >
             <li>
-              <Link>Mon profile</Link>
-            </li>
-            <li>
-              <Link>Settings</Link>
+              <Link to="/members-dashboard/settings">Réglages</Link>
             </li>
             <li>
               <button onClick={logOutService}>Déconnexion</button>
@@ -147,5 +144,6 @@ export default NavBar;
 
 NavBar.propTypes = {
   toggleSidebar: PropTypes.func,
-  isOpen: PropTypes.bool
+  isOpen: PropTypes.bool,
+  isDash: PropTypes.bool
 }

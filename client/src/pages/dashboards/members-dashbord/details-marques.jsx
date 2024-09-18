@@ -8,7 +8,7 @@ import EditMarqueForm from './components/Edit-marque-form'
 const DetailsMarques = () => {
     const {id} = useParams()
 
-    const {data, isLoading, isError, isFetched, refetch} = useQuery("marqueData", async () => {
+    const {data, isLoading, isError, isFetched} = useQuery("marqueData", async () => {
         const rep = await axios.get(`http://localhost:5000/api/marque/${id}`)
 
         return rep.data

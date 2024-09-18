@@ -15,7 +15,7 @@ const MemberDashboard = () => {
     <div className='min-h-screen flex'>
         <SideBar isOpen={isSidebarOpen} className="transition-all duration-300"/>
         <div className={`flex-1 ${isSidebarOpen ? "ml-80" : "ml-0"}`}>
-          <NavBar toggleSidebar={toggleSidebar} isOpen={isSidebarOpen}/>
+          <NavBar toggleSidebar={toggleSidebar} isOpen={isSidebarOpen} isDash={true}/>
           <div className="p-4 mt-16 overflow-auto">
             <Outlet/>
           </div>
