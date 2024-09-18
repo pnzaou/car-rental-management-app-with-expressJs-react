@@ -25,8 +25,6 @@ const NavBar = ({ toggleSidebar, isOpen, isDash }) => {
     }
   };
 
-  console.log(navTheme);
-
   const logOutService = () => {
     const url = window.location.href
     const rep = logout()
