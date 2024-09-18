@@ -4,7 +4,7 @@ const verifyToken = require('../middlewares/verifyToken.middleware')
 const { uploadMultiple, uploadSingle, uploadMultipleClient } = require('../middlewares/multer.middleware')
 const { addDroit, getDroits, updateDroit, deleteDroit } = require('../controllers/droit.controller')
 const { addProfil, getProfils, getProfilDetails, updateProfil, updateProfilDroits, deleteProfil } = require('../controllers/profil.controller')
-const { addUser, getUsers, login, getUserDetails, deleteUser, updatePassword, toggleUserState } = require('../controllers/user.controller')
+const { addUser, getUsers, login, getUserDetails, deleteUser, updatePassword, toggleUserState, getAuthUserDetails } = require('../controllers/user.controller')
 const { addCategorie, updateCategorie, getCategories, deleteCategorie, getCategorieById } = require('../controllers/categorie.controller')
 const { addMarque, getMarques, deleteMarque, updateMarque, getMarqueById } = require('../controllers/marque.controller')
 const { addModele, getModeles, updateModele, deleteModele } = require('../controllers/modele.controller')
@@ -46,6 +46,7 @@ router.route('/api/user/:id')
     .get(getUserDetails)
     .delete(deleteUser)
     .patch(toggleUserState)
+router.get('/api/user', verifyToken, getAuthUserDetails)
 
 
 

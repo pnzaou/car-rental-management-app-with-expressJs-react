@@ -9,10 +9,13 @@ import { useForm } from "react-hook-form"
 export default function AccountSettings() {
     
     const {token} = useContext(TokenContext)
-    const {userId} = jwtDecode(token)
 
     const {data, isLoading, error} = useQuery("userData", async () => {
-        const rep = await axios.get(`http://localhost:5000/api/user/${userId}`)
+        const rep = await axios.get(`http://localhost:5000/api/user`,{
+            headers: {
+                Authorization: token
+            }
+        })
         return rep.data
     })
 
@@ -20,7 +23,6 @@ export default function AccountSettings() {
 
     useEffect(() => {
         if(data) {
-            console.log(data.data);
             setValue("prenom", data.data.user.prenom)
             setValue("nom", data.data.user.nom)
             setValue("email", data.data.user.email)

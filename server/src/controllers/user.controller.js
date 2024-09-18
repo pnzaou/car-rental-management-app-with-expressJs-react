@@ -155,19 +155,25 @@ const deleteUser = async (req, res) => {
  * @param {Object} req - L'objet de requête Express.
  * @param {Object} res - L'objet de réponse Express.
  * @param {string} req.authData.userId - L'identifiant de l'utilisateur dont le mot de passe est mis à jour.
- * @param {string} req.body.password - Le nouveau mot de passe de l'utilisateur.
+ * @param {string} req.body.oldPassword - L'ancien mot de passe de l'utilisateur.
+ * @param {string} req.body.newPassword - Le nouveau mot de passe de l'utilisateur.
  * @returns {Promise<void>} Renvoie une réponse JSON avec un message de succès ou d'erreur.
  */
 const updatePassword = async (req, res) => {
     const {userId} =  req.authData
-    const {password} = req.body
+    const {oldPassword, newPassword} = req.body
     try {
-
-        const tour = await bcrypt.genSalt(10)
-        const hashedPassword = await bcrypt.hash(password, tour)
-        const rep = await User.updateOne({ _id: userId }, { $set: { password: hashedPassword } })
-        const msg = 'Mot de passe modifié avec succès'
-        return res.status(200).json({message: msg, data: rep})
+        const user = await User.findById(userId)
+        const verifPassword = await bcrypt.compare(oldPassword, user.password)
+        if(!verifPassword){
+            return res.status(401).json({message: "Ancien mot de passe incorrect"})
+        } else {
+            const tour = await bcrypt.genSalt(10)
+            const hashedPassword = await bcrypt.hash(newPassword, tour)
+            const rep = await User.updateOne({ _id: userId }, { $set: { password: hashedPassword } })
+            const msg = 'Mot de passe modifié avec succès'
+            return res.status(200).json({message: msg, data: rep})
+        }
 
     } catch (error) {
 
@@ -200,6 +206,20 @@ const toggleUserState = async (req, res) => {
     }
 }
 
+const getAuthUserDetails = async (req, res) => {
+    const {userId} = req.authData
+    try {
+        const user = await User.findById(userId)
+        const profil = await Profil.findById(user.profilId)
+        const msg = 'Utilisateur récupéré avec succès'
+
+        return res.status(200).json({message: msg, data: {user, profil}})
+    } catch (error) {
+        const msg = 'Erreur lors de la récupération de l\'utilisateur'
+        return res.status(500).json({message: msg, erreur: error})
+    }
+}
+
 module.exports = {
     login,
     addUser,
@@ -207,5 +227,6 @@ module.exports = {
     getUserDetails,
     deleteUser,
     updatePassword,
-    toggleUserState
+    toggleUserState,
+    getAuthUserDetails
 }
