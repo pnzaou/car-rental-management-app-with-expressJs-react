@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom"
+import { Link, Outlet } from "react-router-dom"
 import NavBar from "../components/NavBar"
 
 
@@ -14,27 +14,32 @@ const Settings = () => {
                 <h3 className="text-lg font-semibold">Personnel</h3>
                 <ul className="menu menu-compact">
                     <li>
-                    <a className="active">Compte</a>
-                    </li>
-                    <li>
-                    <a>API Keys</a>
-                    </li>
-                    <li>
-                    <a>Notifications</a>
+                        <Link to="/members-dashboard/settings" className="active">Compte</Link>
                     </li>
                 </ul>
                 </div>
                 <div className="py-2">
-                <h3 className="text-lg font-semibold">Workspace</h3>
+                <h3 className="text-lg font-semibold">Droits et Profils</h3>
                 <ul className="menu menu-compact">
                     <li>
-                    <a>Billing</a>
+                        <Link to="/members-dashboard/settings/droits">Droits</Link>
                     </li>
                     <li>
                     <a>Integrations</a>
                     </li>
                     <li>
                     <a>Team Members</a>
+                    </li>
+                    <li className="dropdown dropdown-hover">
+                        <label tabIndex={0} className="">Gestion des marques</label>
+                        <ul
+                            tabIndex={0}
+                            className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow mt-2 ml-20"
+                        >
+                            <li><Link to="/members-dashboard/marques/ajout">Ajouter une marque</Link></li>
+                            <hr className="my-2 border-gray-500" />
+                            <li><Link to="/members-dashboard/marques">Lister les marques</Link></li>
+                        </ul>
                     </li>
                 </ul>
                 </div>

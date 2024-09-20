@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import TokenContext from '../contexts/token.context'
 import { Navigate } from 'react-router-dom'
 import PropTypes from 'prop-types'

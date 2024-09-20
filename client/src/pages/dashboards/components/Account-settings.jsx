@@ -1,6 +1,5 @@
 import { useContext, useEffect } from "react"
 import TokenContext from "../../../contexts/token.context"
-import { jwtDecode } from "jwt-decode"
 import { useQuery } from "react-query"
 import axios from "axios"
 import { useForm } from "react-hook-form"
@@ -23,7 +22,7 @@ export default function AccountSettings() {
         return rep.data
     })
 
-    const {register, handleSubmit, formState: {errors}, setValue} = useForm()
+    const {register, handleSubmit, setValue} = useForm()
 
     useEffect(() => {
         if(data) {
@@ -72,7 +71,7 @@ export default function AccountSettings() {
     }
 
   return (
-    <div className=" w-full max-w-4xl p-6 bg-base-100 rounded-box shadow-md mb-16">
+    <div className="w-full max-w-4xl p-6 bg-base-100 rounded-box shadow-md mb-16">
         {/* Profile Section */}
         <div className="mb-8">
           <h2 className="text-3xl font-bold mb-2">Compte</h2>
@@ -83,56 +82,58 @@ export default function AccountSettings() {
 
         <div className="mb-12">
           <h3 className="text-xl font-semibold mb-4">Profil : {data? data.data.profil.nom : ""}</h3>
-          <div className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit()}>
+            <div className="flex flex-col gap-4">
 
-            {/* First and Last Name */}
-            <div className="flex gap-4">
+              {/* First and Last Name */}
+              <div className="flex gap-4">
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text">Prénom</span>
+                  </label>
+                  <input
+                    type="text"
+                    {...register("prenom")}
+                    className="input input-bordered w-full"
+                  />
+                </div>
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text">Nom</span>
+                  </label>
+                  <input
+                    type="text"
+                    {...register("nom")}
+                    className="input input-bordered w-full"
+                  />
+                </div>
+              </div>
+
+              {/* Email */}
               <div className="form-control w-full">
                 <label className="label">
-                  <span className="label-text">Prénom</span>
+                  <span className="label-text">Email</span>
                 </label>
                 <input
-                  type="text"
-                  {...register("prenom")}
+                  type="email"
+                  {...register("email")}
                   className="input input-bordered w-full"
                 />
               </div>
+
+              {/* Telephone */}
               <div className="form-control w-full">
                 <label className="label">
-                  <span className="label-text">Nom</span>
+                  <span className="label-text">Téléphone</span>
                 </label>
                 <input
-                  type="text"
-                  {...register("nom")}
+                  type="tel"
+                  {...register("telephone")}
                   className="input input-bordered w-full"
                 />
               </div>
             </div>
-
-            {/* Email */}
-            <div className="form-control w-full">
-              <label className="label">
-                <span className="label-text">Email</span>
-              </label>
-              <input
-                type="email"
-                {...register("email")}
-                className="input input-bordered w-full"
-              />
-            </div>
-
-            {/* Telephone */}
-            <div className="form-control w-full">
-              <label className="label">
-                <span className="label-text">Téléphone</span>
-              </label>
-              <input
-                type="tel"
-                {...register("telephone")}
-                className="input input-bordered w-full"
-              />
-            </div>
-          </div>
+          </form>
         </div>
 
         {/* Password Section */}

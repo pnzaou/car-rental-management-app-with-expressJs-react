@@ -20,6 +20,7 @@ import DetailsMarques from "./pages/dashboards/members-dashbord/details-marques"
 import AjoutMarque from "./pages/dashboards/members-dashbord/Ajout-marque";
 import Settings from "./pages/dashboards/members-dashbord/Settings";
 import AccountSettings from "./pages/dashboards/components/Account-settings";
+import ListeDroit from "./pages/dashboards/members-dashbord/Liste-droit";
 
 const queryClient = new QueryClient()
 
@@ -80,6 +81,10 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <AccountSettings/>
+      },
+      {
+        path: "droits",
+        element: <ListeDroit/>
       }
     ]
   },
