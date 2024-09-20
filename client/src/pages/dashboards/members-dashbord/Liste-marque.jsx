@@ -1,13 +1,11 @@
-import { Link } from "react-router-dom"  
-import axios from "axios"
-import toast from "react-hot-toast"
+import { Link } from "react-router-dom"
 import { useContext, useState } from "react"
 import useFetchData from "../../../hooks/useFetchData"
 import TokenContext from "../../../contexts/token.context"
 import usePaginatedFilter from "../../../hooks/usePaginatedFilter"
 import Pagination from "../../../components/Pagination"
 import DataWrapper from "../../../components/DataWrapper"
-
+import useDeleteItem from "../../../hooks/useDeleteItem"
 
 const ListeMarque = () => {
   const [idMarque, setIdMarque] = useState("")
@@ -15,6 +13,7 @@ const ListeMarque = () => {
   const queryKey = "marqueData"
   const {token} = useContext(TokenContext)
   const url = "http://localhost:5000/api/marques"
+  const supUrl = "http://localhost:5000/api/marque"
 
   const {data, isError, isLoading, refetch} = useFetchData(queryKey, url, token)
 
@@ -28,34 +27,7 @@ const ListeMarque = () => {
     totalPages
   } = usePaginatedFilter(data?.data, "nom", marParPage)
 
-  
-
-  const deleteMarque = async (id) => {
-    try {
-      const rep = await axios.delete(`http://localhost:5000/api/marque/${id}`)
-      toast.success(rep.data.message, {
-        position: "bottom-right"
-    })
-    document.querySelector(".alert-error").classList.add("hidden")
-    setIdMarque("")
-    refetch()
-    setCurrentPage(Math.ceil((data.data.length - 1) / marParPage))
-    } catch (error) {
-      toast.error(error.response.data.message, {
-        position: "bottom-right"
-    })
-    }
-  }
-
-  const showAlert = (id) => {
-    document.querySelector(".alert-error").classList.remove("hidden")
-    setIdMarque(id)
-  }
-
-  const hiddenAlert = () => {
-    document.querySelector(".alert-error").classList.add("hidden")
-    setIdMarque("")
-  }
+  const {deleteItem, hiddenAlert, showAlert} = useDeleteItem(token, refetch, setCurrentPage, marParPage)
 
   return (
     <div>
@@ -74,8 +46,8 @@ const ListeMarque = () => {
           </svg>
           <span>La suppression de la marque entrainera celle des modèles qui lui sont ratachés et éventuellement celle des voitures liées à ces modèles ! Voulez-vous vraiment supprimer ?</span>
           <div>
-            <button className="btn btn-sm mr-2" onClick={hiddenAlert}>Annuler</button>
-            <button className="btn btn-sm btn-primary" onClick={() => deleteMarque(idMarque)}>Oui</button>
+            <button className="btn btn-sm mr-2" onClick={() => hiddenAlert(setIdMarque)}>Annuler</button>
+            <button className="btn btn-sm btn-primary" onClick={() => deleteItem(idMarque, supUrl, setIdMarque)}>Oui</button>
           </div>
         </div>
         <div className="text-center">
@@ -91,7 +63,6 @@ const ListeMarque = () => {
         </div>
         <div className="mt-16 overflow-x-auto flex justify-center">
           <div>
-
             <div className="form-control mb-10 px-48">
               <label className="input input-bordered flex items-center gap-2">
                 <input type="text" className="grow" placeholder="Rechercher..." value={searchItem} onChange={(e) => setSearchItem(e.target.value)}/>
@@ -141,7 +112,7 @@ const ListeMarque = () => {
                   </td>
                   <th>
                     <Link to={`/members-dashboard/marques/details/${mar._id}`} className="btn btn-accent btn-sm mr-4">Détails</Link>
-                    <button className="btn btn-error btn-sm" onClick={() => showAlert(mar._id)}>Supprimer</button>
+                    <button className="btn btn-error btn-sm" onClick={() => showAlert(mar._id, setIdMarque)}>Supprimer</button>
                   </th>
                 </tr>
                 ))}

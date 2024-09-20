@@ -1,12 +1,11 @@
 import { useContext, useState } from 'react'
-import axios from 'axios'
-import toast from 'react-hot-toast'
 import { Link } from 'react-router-dom'
 import TokenContext from "../../../contexts/token.context"
 import useFetchData from '../../../hooks/useFetchData'
 import usePaginatedFilter from '../../../hooks/usePaginatedFilter'
 import Pagination from '../../../components/Pagination'
 import DataWrapper from '../../../components/DataWrapper'
+import useDeleteItem from '../../../hooks/useDeleteItem'
 
 const ListeCategorie = () => {
   const [idCat, setIdCat] = useState("") 
@@ -14,6 +13,7 @@ const ListeCategorie = () => {
   const queryKey = "catData"
   const {token} = useContext(TokenContext)
   const url = "http://localhost:5000/api/categories"
+  const supUrl = "http://localhost:5000/api/categorie"
 
   const {data, isError, isLoading, refetch} = useFetchData(queryKey, url, token)
 
@@ -27,39 +27,7 @@ const ListeCategorie = () => {
     setCurrentPage
   } = usePaginatedFilter(data?.data, "nom", catsParPage)
 
-    //suppression d'une categorie
-    const deleteCat = async (id) => {
-        try {
-            const rep = await axios.delete(`http://localhost:5000/api/categorie/${id}`, {
-              headers: {
-                  Authorization: token
-              }
-          })
-            toast.success(rep.data.message, {
-                position: "bottom-right"
-            })
-            document.querySelector(".alert-error").classList.add("hidden")
-            setIdCat("")
-            refetch()
-            setCurrentPage(Math.ceil((data?.data.length - 1) / catsParPage))
-        } catch (error) {
-            toast.error(error.response.data.message, {
-                position: "bottom-right"
-            })
-        }
-    }
-
-    //affichage de l'arlete supression
-    const showAlert = (id) => {
-      document.querySelector(".alert-error").classList.remove("hidden")
-      setIdCat(id)
-    }
-  
-    //masquer l'alerte supression
-    const hiddenAlert = () => {
-      document.querySelector(".alert-error").classList.add("hidden")
-      setIdCat("")
-    }
+  const {deleteItem, showAlert, hiddenAlert} = useDeleteItem(token, refetch, setCurrentPage, catsParPage)
 
     return (
       <div>
@@ -79,8 +47,8 @@ const ListeCategorie = () => {
             </svg>
             <span>Voulez-vous vraiment supprimer ?</span>
             <div>
-              <button className="btn btn-sm mr-2" onClick={hiddenAlert}>Annuler</button>
-              <button className="btn btn-sm btn-primary" onClick={() => deleteCat(idCat)}>Oui</button>
+              <button className="btn btn-sm mr-2" onClick={() => hiddenAlert(setIdCat)}>Annuler</button>
+              <button className="btn btn-sm btn-primary" onClick={() => deleteItem(idCat, supUrl, setIdCat)}>Oui</button>
             </div>
           </div>
           <div className="text-center">
@@ -134,7 +102,7 @@ const ListeCategorie = () => {
                         >
                           Détails
                         </Link>
-                        <button className="btn btn-error btn-sm" onClick={() => showAlert(cat._id)}>Supprimer</button>
+                        <button className="btn btn-error btn-sm" onClick={() => showAlert(cat._id, setIdCat)}>Supprimer</button>
                       </td>
                     </tr>
                   ))}
