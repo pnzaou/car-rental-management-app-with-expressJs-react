@@ -4,12 +4,19 @@ import { useQuery } from 'react-query'
 import { Link, useParams } from 'react-router-dom'
 import ListeModele from './components/Liste-modele'
 import EditMarqueForm from './components/Edit-marque-form'
+import { useContext } from 'react'
+import TokenContext from '../../../contexts/token.context'
 
 const DetailsMarques = () => {
     const {id} = useParams()
+    const {token} = useContext(TokenContext)
 
     const {data, isLoading, isError, isFetched} = useQuery("marqueData", async () => {
-        const rep = await axios.get(`http://localhost:5000/api/marque/${id}`)
+        const rep = await axios.get(`http://localhost:5000/api/marque/${id}`,{
+            headers: {
+                Authorization: token
+            }
+        })
 
         return rep.data
     },{

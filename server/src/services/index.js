@@ -1,5 +1,6 @@
 const fs = require('fs')
 const nodemailer = require('nodemailer')
+const path = require('path')
 
 const deleteLogo = (file) => {
     const fileArray = file.split('/')
@@ -22,7 +23,14 @@ const transporter = nodemailer.createTransport({
 });
 
 
+const getEmailTemplate = (filename) => {
+  const emailTemplatePath = path.join('src', 'mails', filename)
+  return fs.readFileSync(emailTemplatePath, 'utf8')
+}
+
+
 module.exports = {
     deleteLogo,
-    transporter
+    transporter,
+    getEmailTemplate
 }

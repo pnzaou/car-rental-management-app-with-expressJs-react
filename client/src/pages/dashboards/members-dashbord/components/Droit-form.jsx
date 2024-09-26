@@ -3,18 +3,21 @@ import PropTypes from "prop-types"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 
-const DroitForm = ({refetch, totalPages}) => {
+const DroitForm = ({refetch, totalPages, handlePageChange}) => {
 
-    const {register, handleSubmit, formState: {errors}} = useForm()
+    const {register, handleSubmit, formState: {errors}, setValue} = useForm()
 
     const onSubmit = async (data) => {
         try {
             const rep = await axios.post("http://localhost:5000/api/droits", data)
             refetch()
+            setValue("autorisation", "")
+            handlePageChange(totalPages)
             toast.success(rep.data.message, {
                 position: "bottom-right"
             })
         } catch (error) {
+            setValue("nom", "")
             toast.error(error.response.data.message, {
                 position: "bottom-right"
             })
@@ -70,5 +73,6 @@ export default DroitForm
 
 DroitForm.propTypes = {
     refetch: PropTypes.func,
-    totalPages: PropTypes.number
+    totalPages: PropTypes.number,
+    handlePageChange: PropTypes.func
 }

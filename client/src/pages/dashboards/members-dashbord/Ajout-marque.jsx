@@ -82,6 +82,7 @@ export default function AjoutMarque() {
               </label>
               <input
                 type="file"
+                accept=".png, .jpg, .jpeg"
                 className="file-input file-input-bordered w-full"
                 {...register("image", {
                     required: true

@@ -10,7 +10,7 @@ import useDeleteItem from "../../../hooks/useDeleteItem"
 const ListeMarque = () => {
   const [idMarque, setIdMarque] = useState("")
   const marParPage = 5
-  const queryKey = "marqueData"
+  const queryKey = "marData"
   const {token} = useContext(TokenContext)
   const url = "http://localhost:5000/api/marques"
   const supUrl = "http://localhost:5000/api/marque"

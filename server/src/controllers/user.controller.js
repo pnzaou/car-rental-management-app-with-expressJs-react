@@ -1,8 +1,32 @@
 const User = require('../models/User.model')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const nodemailer = require('nodemailer')
 const Profil = require('../models/Profil.model')
 const fs = require('fs')
+const { getEmailTemplate, transporter } = require('../services')
+
+const sendConfirmationEmail = async (userEmail, userName, confirmationLink) => {
+    const emailTemplate = getEmailTemplate("update-password-confirmation.html")
+
+    const emailContent = emailTemplate
+        .replace('{{username}}', userName)
+        .replace('{{confirmationLink}}', confirmationLink)
+
+    let mailOptions = {
+        from: 'perrinemmanuelnzaou@gmail.com',
+        to: userEmail,
+        subject: 'Confirmation de modification de mot de passe',
+        html: emailContent
+    }
+
+    try {
+        await transporter.sendMail(mailOptions)
+        console.log('Email envoyé avec succès.')
+    } catch (error) {
+        console.error('Erreur lors de l\'envoi de l\'email:', error)
+    }
+} 
 
 /**
  * Crée un nouvel utilisateur avec un mot de passe haché.
@@ -48,8 +72,9 @@ const addUser = async (req, res) => {
  * @returns {Promise<void>} Renvoie une réponse JSON avec la liste des utilisateurs récupérés.
  */
 const getUsers = async (req, res) => {
+    const {userId} = req.authData
     try {
-        const rep = await User.find()
+        const rep = await User.find({_id: {$ne: userId}})
         const msg = 'Utilisateurs récupérés avec succès'
         return res.status(200).json({message: msg, data: rep})
     } catch (error) {
@@ -159,28 +184,50 @@ const deleteUser = async (req, res) => {
  * @param {string} req.body.newPassword - Le nouveau mot de passe de l'utilisateur.
  * @returns {Promise<void>} Renvoie une réponse JSON avec un message de succès ou d'erreur.
  */
-const updatePassword = async (req, res) => {
+const requestPasswordChange = async (req, res) => {
     const {userId} =  req.authData
     const {oldPassword, newPassword} = req.body
+
     try {
         const user = await User.findById(userId)
         const verifPassword = await bcrypt.compare(oldPassword, user.password)
         if(!verifPassword){
             return res.status(401).json({message: "Ancien mot de passe incorrect"})
         } else {
-            const tour = await bcrypt.genSalt(10)
-            const hashedPassword = await bcrypt.hash(newPassword, tour)
-            const rep = await User.updateOne({ _id: userId }, { $set: { password: hashedPassword } })
-            const msg = 'Mot de passe modifié avec succès'
-            return res.status(200).json({message: msg, data: rep})
+
+            const secret = fs.readFileSync('./.meow/meowPr.pem')
+            const token = jwt.sign({userId: user._id, newPassword}, secret, {expiresIn: '1h', algorithm: "RS256"})
+            const confirmationLink = `http://localhost:5173/confirm-password-change?token=${token}`;
+            await sendConfirmationEmail(user.email, user.prenom, confirmationLink)
+
+            return res.status(200).json({message: 'Email de confirmation envoyé. Veuillez vérifier votre boîte mail.'});
+                        
         }
 
     } catch (error) {
-
         const msg = 'Erreur lors de la modification du mot de passe'
+        console.log(error);
         return res.status(500).json({message: msg, erreur: error})
-
     }    
+}
+
+const confirmPasswordChange = async (req, res) => {
+    const {token} = req.query
+
+    try {
+        const secret = fs.readFileSync('./.meow/meowPu.pem')
+        const decode = jwt.verify(token, secret)
+        const {userId, newPassword} = decode 
+        const tour = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(newPassword, tour)
+
+        await User.updateOne({ _id: userId }, { $set: { password: hashedPassword } })
+
+        res.status(200).json({message: 'Mot de passe modifié avec succès'})
+
+    } catch (error) {
+        res.status(400).json({message: 'Le lien de confirmation est invalide ou a expiré', erreur: error})
+    }
 }
 
 /**
@@ -226,7 +273,8 @@ module.exports = {
     getUsers,
     getUserDetails,
     deleteUser,
-    updatePassword,
+    requestPasswordChange,
+    confirmPasswordChange,
     toggleUserState,
     getAuthUserDetails
 }

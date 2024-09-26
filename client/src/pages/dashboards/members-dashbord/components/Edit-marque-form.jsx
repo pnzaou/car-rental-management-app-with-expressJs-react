@@ -31,10 +31,7 @@ const EditMarqueForm = ({marData}) => {
                     'Content-Type': 'multipart/form-data'
                 }
             })
-
             queryClient.invalidateQueries("marqueData")
-
-
             navigate("/members-dashboard/marques")
             toast.success(rep.data.message, {
                 position: "bottom-right"

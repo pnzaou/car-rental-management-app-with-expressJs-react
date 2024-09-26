@@ -3,14 +3,17 @@ import useFetchData from "../../../hooks/useFetchData";
 import usePaginatedFilter from "../../../hooks/usePaginatedFilter";
 import DataWrapper from "../../../components/DataWrapper";
 import Pagination from "../../../components/Pagination";
+import { useContext } from "react";
+import TokenContext from "../../../contexts/token.context";
 
 function ListeDroit() {
 
   const droitsParPage = 5
   const queryKey = "droitData"
   const url = "http://localhost:5000/api/droits"
+  const {token} = useContext(TokenContext)
 
-  const { data, isLoading, isError, refetch } = useFetchData(queryKey, url);
+  const { data, isLoading, isError, refetch } = useFetchData(queryKey, url, token);
 
   const {
     currentPage,
@@ -24,7 +27,7 @@ function ListeDroit() {
   return (
     <DataWrapper isLoading={isLoading} isError={isError} onRetry={refetch}>
       <div className="w-full max-w-4xl p-6 bg-base-100 rounded-box shadow-md mb-16">
-        <DroitForm refetch={refetch} totalPages={totalPages}/>  
+        <DroitForm refetch={refetch} totalPages={totalPages} handlePageChange={handlePageChange}/>  
         <div className="text-center">
           <h1 className="text-2xl font-bold">Liste des droits</h1>
         </div>
@@ -57,8 +60,8 @@ function ListeDroit() {
               {paginatedData.map(droit => (
                   <tr className="bg-base-200" key={droit._id}>
                       <td>{droit.autorisation}</td>
-                      <td>Quality Control Specialist</td>
-                      <td>Blue</td>
+                      <td><button className="btn btn-sm btn-accent">Modifier</button></td>
+                      <td><button className="btn btn-sm btn-error">Supprimer</button></td>
                   </tr>
               ))}
             </tbody>

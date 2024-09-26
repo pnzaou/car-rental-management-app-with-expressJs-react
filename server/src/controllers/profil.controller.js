@@ -12,13 +12,17 @@ const ProfilDroit = require('../models/ProfilDroit.model')
 const addProfil = async (req, res) => {
     const {nom, droitId} = req.body
     try {
-        const rep = await Profil.create({nom: nom})
-        droitId.map(async (id) => {
-            const rep1 = await ProfilDroit.create({droitId: id, profilId: rep._id})
-            console.log(rep1)
-        })
-        const msg = "Profil enregistré avec succès"
-        return res.status(201).json({message: msg, data: rep})
+        if(droitId.length === 0 || !droitId) {
+            return res.status(400).json({message: "Veuillez assigner des droits au profil"})
+        } else {
+            const rep = await Profil.create({nom: nom})
+            droitId.map(async (id) => {
+                const rep1 = await ProfilDroit.create({droitId: id, profilId: rep._id})
+                console.log(rep1)
+            })
+            const msg = "Profil enregistré avec succès"
+            return res.status(201).json({message: msg, data: rep})
+        }
     } catch (error) {
         const msg ="Erreur lors de l'enregistrement"
         return res.status(500).json({message: msg, erreur: error})
@@ -64,6 +68,18 @@ const getProfilDetails = async (req, res) => {
         data.droits = await Promise.all(droitsPromises)
         const msg = 'Données récupérées avec succès'
         return res.status(200).json({message: msg, data: data})
+    } catch (error) {
+        const msg = 'Erreur lors de la récupération des données'
+        return res.status(500).json({message: msg, erreur: error})
+    }
+}
+
+const getProfil = async (req, res) => {
+    const {id} = req.params
+    try {
+        const rep = await Profil.findById(id, {_id: 0, nom: 1})
+        const msg = "nom du profil récupéré avec succès"
+        return res.status(200).json({message: msg, data: rep})
     } catch (error) {
         const msg = 'Erreur lors de la récupération des données'
         return res.status(500).json({message: msg, erreur: error})
@@ -171,5 +187,6 @@ module.exports = {
     getProfilDetails,
     updateProfilDroits,
     updateProfil,
-    deleteProfil
+    deleteProfil,
+    getProfil
 }

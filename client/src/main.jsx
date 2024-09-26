@@ -21,6 +21,10 @@ import AjoutMarque from "./pages/dashboards/members-dashbord/Ajout-marque";
 import Settings from "./pages/dashboards/members-dashbord/Settings";
 import AccountSettings from "./pages/dashboards/components/Account-settings";
 import ListeDroit from "./pages/dashboards/members-dashbord/Liste-droit";
+import ListeProfils from "./pages/dashboards/members-dashbord/Liste-profils";
+import ListeUsers from "./pages/dashboards/members-dashbord/Liste-users";
+import AjoutUser from "./pages/dashboards/members-dashbord/Ajout-user";
+import ConfirmPasswordChange from "./pages/confirm-password-change";
 
 const queryClient = new QueryClient()
 
@@ -85,8 +89,24 @@ const router = createBrowserRouter([
       {
         path: "droits",
         element: <ListeDroit/>
+      },
+      {
+        path: "profils",
+        element: <ListeProfils/>
+      },
+      {
+        path: "utilisateurs",
+        element: <ListeUsers/>
+      },
+      {
+        path: "utilisateurs/ajout",
+        element: <AjoutUser/>
       }
     ]
+  },
+  {
+    path: "/confirm-password-change",
+    element: <ConfirmPasswordChange/>
   },
   {
     path: "*",

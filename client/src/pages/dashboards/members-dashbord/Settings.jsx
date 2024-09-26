@@ -1,8 +1,17 @@
-import { Link, Outlet } from "react-router-dom"
+import { Link, Outlet, useLocation } from "react-router-dom"
 import NavBar from "../components/NavBar"
+import { useEffect, useState } from "react";
 
 
 const Settings = () => {
+    const location = useLocation()
+    console.log(location);
+    const [url, setUrl] = useState(location.pathname)
+
+    useEffect(() => {
+        setUrl(location.pathname)
+    }, [location])
+
   return (
     <div>
         <NavBar isDash={false}/>
@@ -14,7 +23,13 @@ const Settings = () => {
                 <h3 className="text-lg font-semibold">Personnel</h3>
                 <ul className="menu menu-compact">
                     <li>
-                        <Link to="/members-dashboard/settings" className="active">Compte</Link>
+                    <Link
+                        to="/members-dashboard/settings"
+                        className={url === "/members-dashboard/settings" ? "active" : ""}
+                        onClick={() => setUrl("/members-dashboard/settings")}
+                    >
+                        Compte
+                    </Link>
                     </li>
                 </ul>
                 </div>
@@ -22,26 +37,38 @@ const Settings = () => {
                 <h3 className="text-lg font-semibold">Droits et Profils</h3>
                 <ul className="menu menu-compact">
                     <li>
-                        <Link to="/members-dashboard/settings/droits">Droits</Link>
+                    <Link
+                        to="/members-dashboard/settings/droits"
+                        className={url.includes("droits") ? "active" : ""}
+                        onClick={() => setUrl("/members-dashboard/settings/droits")}
+                    >
+                        Droits
+                    </Link>
                     </li>
                     <li>
-                    <a>Integrations</a>
-                    </li>
-                    <li>
-                    <a>Team Members</a>
-                    </li>
-                    <li className="dropdown dropdown-hover">
-                        <label tabIndex={0} className="">Gestion des marques</label>
-                        <ul
-                            tabIndex={0}
-                            className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow mt-2 ml-20"
-                        >
-                            <li><Link to="/members-dashboard/marques/ajout">Ajouter une marque</Link></li>
-                            <hr className="my-2 border-gray-500" />
-                            <li><Link to="/members-dashboard/marques">Lister les marques</Link></li>
-                        </ul>
+                    <Link
+                        to="/members-dashboard/settings/profils"
+                        className={url.includes("profils") ? "active" : ""}
+                        onClick={() => setUrl("/members-dashboard/settings/profils")}
+                    >
+                        Profils
+                    </Link>
                     </li>
                 </ul>
+                </div>
+                <div className="py-2">
+                    <h3 className="text-lg font-semibold">Utilisateurs</h3>
+                    <ul className="menu menu-complet">
+                        <li>
+                        <Link
+                            to="/members-dashboard/settings/utilisateurs"
+                            className={url.includes("utilisateurs") ? "active" : ""}
+                            onClick={() => setUrl("/members-dashboard/settings/utilisateurs")}
+                        >
+                            Liste des utilisateurs
+                        </Link>
+                        </li>
+                    </ul>
                 </div>
             </div>
 
