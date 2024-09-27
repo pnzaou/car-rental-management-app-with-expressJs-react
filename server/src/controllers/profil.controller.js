@@ -1,6 +1,7 @@
 const Droit = require('../models/Droit.model')
 const Profil = require('../models/Profil.model')
 const ProfilDroit = require('../models/ProfilDroit.model')
+const User = require('../models/User.model')
 
 /**
  * Ajoute un nouveau profil et assigne des droits à ce profil.
@@ -172,6 +173,7 @@ const deleteProfil = async (req, res) => {
     try {
         const rep = await Profil.findByIdAndDelete(id)
         const rep1 = await ProfilDroit.deleteMany({profilId: id})
+        await User.updateMany({profilId: id}, {$set: {profilId: null, etat: false}})
         console.log(rep1);
         const msg = 'Suppression réussie'
         return res.status(200).json({message: msg, data: rep})
