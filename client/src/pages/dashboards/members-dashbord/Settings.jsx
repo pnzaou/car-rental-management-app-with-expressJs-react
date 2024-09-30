@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 
 const Settings = () => {
     const location = useLocation()
-    console.log(location);
     const [url, setUrl] = useState(location.pathname)
 
     useEffect(() => {

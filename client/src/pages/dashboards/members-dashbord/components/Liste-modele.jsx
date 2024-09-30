@@ -1,17 +1,21 @@
 import PropTypes from "prop-types" 
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import { Link } from "react-router-dom"
 import TokenContext from "../../../../contexts/token.context"
 import useFetchData from "../../../../hooks/useFetchData"
 import usePaginatedFilter from "../../../../hooks/usePaginatedFilter"
 import Pagination from "../../../../components/Pagination"
 import DataWrapper from "../../../../components/DataWrapper"
+import useDeleteItem from '../../../../hooks/useDeleteItem'
+import ModeleForm from "./Modele-form"
 
 const ListeModele = ({id}) => {
-    const modsParpage = 5
+    const [modId, setModId] = useState("")
+    const modsParpage = 4
     const url = `http://localhost:5000/api/modeles/${id}`
     const {token} = useContext(TokenContext)
     const queryKey = "modeleData"
+    const supUrl = `http://localhost:5000/api/modele/${id}`
 
     const {data, isLoading, isError, refetch} = useFetchData(queryKey, url, token)
 
@@ -25,10 +29,31 @@ const ListeModele = ({id}) => {
         totalPages
     } = usePaginatedFilter(data?.data, "nom", modsParpage)
 
+    const {deleteItem, hiddenAlert, showAlert} = useDeleteItem(token, refetch, setCurrentPage, modsParpage)
+
     return (
         <div className="mt-12 overflow-x-auto flex justify-center">
             <DataWrapper isLoading={isLoading} isError={isError} onRetry={refetch}>
+                <ModeleForm marqueId={id} refetch={refetch}/>
                 <div>
+                    <div role="alert" className="alert alert-error mb-4 hidden">
+                        <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6 shrink-0 stroke-current"
+                        fill="none"
+                        viewBox="0 0 24 24">
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <span>Voulez-vous vraiment supprimer le modèle ?</span>
+                        <div>
+                        <button className="btn btn-sm mr-2" onClick={() => hiddenAlert(setModId)}>Annuler</button>
+                        <button className="btn btn-sm btn-primary" onClick={() => deleteItem(modId, supUrl, setModId)}>Oui</button>
+                        </div>
+                    </div>
                     <div className="form-control mb-10 px-48">
                         <label className="input input-bordered flex items-center gap-2">
                             <input type="text" className="grow" placeholder="Rechercher..." value={searchItem} onChange={(e) => setSearchItem(e.target.value)}/>
@@ -71,7 +96,7 @@ const ListeModele = ({id}) => {
                                 </Link>
                                 <button
                                 className="btn btn-error btn-sm"
-                                onClick={() => {}}
+                                onClick={() => {showAlert(mod._id, setModId)}}
                                 >
                                 Supprimer
                                 </button>
@@ -80,9 +105,8 @@ const ListeModele = ({id}) => {
                         ))}
                         </tbody>
                     </table>
+                    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange}/>
                 </div>
-
-                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange}/>
             </DataWrapper>
         </div>
     )

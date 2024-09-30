@@ -73,7 +73,7 @@ router.route('/api/marque/:id')
 
 
 //Routes liées aux MODELES
-router.post('/api/modeles', addModele)
+router.post('/api/modeles/:marqueId', addModele)
 router.get('/api/modeles/:idMarque', getModeles)
 router.route('/api/modele/:idMarque/:id')
     .put(updateModele)

@@ -9,7 +9,8 @@ const Voiture = require('../models/Voiture.model')
  * @returns {Promise<void>} Renvoie une réponse JSON avec un message et les données du modèle ajouté.
  */
 const addModele = async (req, res) => {
-    const {nom, description, marqueId} = req.body
+    const { marqueId } = req.params
+    const {nom, description} = req.body
     try {
         const rep = await Modele.create({nom, description, marqueId})
         const msg = "Modèle Enregistré avec succès."

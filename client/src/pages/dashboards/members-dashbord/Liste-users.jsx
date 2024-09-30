@@ -45,10 +45,8 @@ const ListeUsers = () => {
     const fetchProfils = async () => {
       const newProfils = {}
       for (let user of paginatedData) {
-        console.log("user", user);
         const profil = await getUserProfil(user.profilId)
         newProfils[user._id] = profil
-        console.log("newProfil", newProfils);
       }
       setProfils(newProfils)
     }
@@ -116,7 +114,11 @@ const ListeUsers = () => {
                 {paginatedData.map(user => (
                   <tr className="hover" key={user._id}>
                     <th>{`${user.prenom} ${user.nom}`}</th>
-                    <td>{profils[user._id] || "Chargement..."}</td>
+                    <td>{
+                      profils[user._id]? 
+                      profils[user._id] === "Erreur" ? "Aucun" 
+                      : profils[user._id] : "Chargement..."}
+                    </td>
                     <td>{format(new Date(user.createdAt), 'dd/MM/yyyy')}</td>
                     <td>
                       <div className={`badge badge-${user.etat ? "success" : "error"}`}>
