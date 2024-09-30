@@ -5,9 +5,13 @@ import { Outlet } from 'react-router-dom';
 
 
 const MemberDashboard = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    if(localStorage.getItem("sidebarState") === 'false') return false
+    return true
+  });
 
   const toggleSidebar = () => {
+    localStorage.setItem("sidebarState", !isSidebarOpen)
     setIsSidebarOpen(!isSidebarOpen)
   }
 
