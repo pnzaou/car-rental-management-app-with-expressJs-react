@@ -25,6 +25,8 @@ import ListeProfils from "./pages/dashboards/members-dashbord/Liste-profils";
 import ListeUsers from "./pages/dashboards/members-dashbord/Liste-users";
 import AjoutUser from "./pages/dashboards/members-dashbord/Ajout-user";
 import ConfirmPasswordChange from "./pages/confirm-password-change";
+import AjoutVehicule from "./pages/dashboards/members-dashbord/Ajout-vehicule";
+import GestionUnitSTarificationOptionsLocation from "./pages/dashboards/members-dashbord/Gestion-unitésTarification-optionsLocation";
 
 const queryClient = new QueryClient()
 
@@ -75,6 +77,14 @@ const router = createBrowserRouter([
       {
         path: "marques/details/:id",
         element: <DetailsMarques/>
+      },
+      {
+        path: "unitésdetarificationoptionsdelocation",
+        element: <GestionUnitSTarificationOptionsLocation/>
+      },
+      {
+        path: "vehicules/ajout",
+        element: <AjoutVehicule/>
       }
     ]
   },

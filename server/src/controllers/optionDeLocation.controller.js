@@ -34,7 +34,7 @@ const getOptions = async (req, res) => {
     try {
 
         const rep = await OptionLocation.find()
-        const msg = "Options récupérées avec succès"
+        const msg = "Options de location récupérées avec succès"
         return res.status(200).json({message: msg, data: rep})
 
     } catch (error) {
