@@ -7,6 +7,7 @@ const voitureModel = new Schema({
     DateMiseCirculation: {type: Date, default: null},
     typeCarburant: {type: String, required: true},
     capaciteDassise: {type: Number, required: true},
+    Quantite: {type: Number, default: null},
     categorieId: {type: Schema.Types.ObjectId, ref: 'Categorie'},
     modeleId: {type: Schema.Types.ObjectId, ref: 'Modele'}
 }, {timestamps: true})
