@@ -124,6 +124,19 @@ const updateMarque = async (req, res) => {
     }
 }
 
+const getMarquesWithTheirModeles = async (req, res) => {
+    try {
+        const marques = await Marque.find().lean()
+        const marquesWithModels = await Promise.all(marques.map(async (marque) => {
+            const modeles = await Modele.find({marqueId: marque._id}).lean()
+        }))
+
+        res.status(200).json(marquesWithModels)
+    } catch (error) {
+        res.status(500).json({message: 'Erreur lors de la récupération des marques et des modèles'})
+    }
+}
+
 module.exports = {
     addMarque,
     getMarques,

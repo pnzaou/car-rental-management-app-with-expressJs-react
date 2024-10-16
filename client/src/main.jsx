@@ -26,8 +26,8 @@ import ListeUsers from "./pages/dashboards/members-dashbord/Liste-users";
 import AjoutUser from "./pages/dashboards/members-dashbord/Ajout-user";
 import ConfirmPasswordChange from "./pages/confirm-password-change";
 import AjoutVehicule from "./pages/dashboards/members-dashbord/Ajout-vehicule";
-import GestionUniteTarification from "./pages/dashboards/members-dashbord/components/Gestion-unite-tarification";
-import GestionOptionLocation from "./pages/dashboards/members-dashbord/components/Gestion-option-location";
+import GestionUniteTarification from "./pages/dashboards/members-dashbord/Gestion-unite-tarification";
+import GestionOptionLocation from "./pages/dashboards/members-dashbord/Gestion-option-location";
 
 const queryClient = new QueryClient()
 

@@ -1,37 +1,38 @@
-import{ useContext, useState } from 'react';
-import TokenContext from '../../../../contexts/token.context';
-import useFetchData from '../../../../hooks/useFetchData';
-import usePaginatedFilter from '../../../../hooks/usePaginatedFilter';
-import Pagination from '../../../../components/Pagination';
-import UniteTarifForm from './UniteTarif-form';
-import useDeleteItem from '../../../../hooks/useDeleteItem';
-import DataWrapper from '../../../../components/DataWrapper';
+import { useContext, useState } from 'react';
+import TokenContext from '../../../contexts/token.context';
+import useFetchData from '../../../hooks/useFetchData';
+import useDeleteItem from '../../../hooks/useDeleteItem';
+import usePaginatedFilter from '../../../hooks/usePaginatedFilter';
+import Pagination from '../../../components/Pagination';
+import DataWrapper from '../../../components/DataWrapper';
 
-const GestionUniteTarification = () => {
+const GestionOptionLocation = () => {
     const [id, setId] = useState("")
     const {token} = useContext(TokenContext)
     const itemsParPage = 4
-    const url = "http://localhost:5000/api/unites"
-    const supUrl = "http://localhost:5000/api/unite"
+    const url = "http://localhost:5000/api/options"
+    const supUrl = "http://localhost:5000/api/option"
+
     const {
-        data: UTData, 
-        isLoading: UTLoading, 
-        isError: UTError, 
-        refetch: UTRefetch
-    } = useFetchData("UTData", url, token)
+        data: OLData, 
+        isLoading: OLLoading, 
+        isError: OLError,
+        refetch: OLRefetch
+    } = useFetchData("OLData", url, token)
     const {
-        currentPage: UTCurrentPage,
-        handlePageChange: UTHandlePageChange,
-        paginatedData: UTPaginatedData,
-        searchItem: UTSearchItem,
-        setCurrentPage: UTSetCurrentPage,
-        setSearchItem: UTSetSearchItem,
-        totalPages: UTTotalPages
-    } = usePaginatedFilter(UTData?.data, "nom", itemsParPage)
-    const {deleteItem, showAlert, hiddenAlert} = useDeleteItem(token, UTRefetch, UTSetCurrentPage)
+        currentPage: OLCurrentPage,
+        handlePageChange: OLHandlePageChange,
+        paginatedData: OLPaginatedData,
+        searchItem: OLSearchItem,
+        setCurrentPage: OLSetCurrentPage,
+        setSearchItem: OLSetSearchItem,
+        totalPages: OLTotalPages
+    } = usePaginatedFilter(OLData?.data, "nom", itemsParPage)
+
+    const {deleteItem, showAlert, hiddenAlert} = useDeleteItem(token, OLRefetch, OLSetCurrentPage)
     return (
         <div>
-            <DataWrapper isLoading={UTLoading} isError={UTError} onRetry={UTRefetch}>
+            <DataWrapper isLoading={OLLoading} isError={OLError} onRetry={OLRefetch}>
                 <div role="alert" className="alert alert-error hidden">
                     <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -50,15 +51,14 @@ const GestionUniteTarification = () => {
                     <button className="btn btn-sm btn-primary" onClick={() => deleteItem(id, supUrl, setId)}>Oui</button>
                     </div>
                 </div>
-                <UniteTarifForm key="add-form" isEdit={false}/>
-                <div className="text-center mb-12">
-                    <h1 className="text-2xl font-bold">Liste des Unités de tarification</h1>
+                <div className="text-center my-12">
+                    <h1 className="text-2xl font-bold">Liste des Options de location</h1>
                 </div>
                 <div className="overflow-x-auto flex justify-center">
                     <div>
                         <div className="form-control mb-10 px-48">
                             <label className="input input-bordered flex items-center gap-2">
-                            <input type="text" className="grow" placeholder="Rechercher..." value={UTSearchItem} onChange={(e) => UTSetSearchItem(e.target.value)}/>
+                            <input type="text" className="grow" placeholder="Rechercher..." value={OLSearchItem} onChange={(e) => OLSetSearchItem(e.target.value)}/>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 16 16"
@@ -75,16 +75,16 @@ const GestionUniteTarification = () => {
                             {/* head */}
                             <thead>
                             <tr>
-                                <th>Unité</th>
+                                <th>Option</th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {UTPaginatedData.map((UT) => (
+                            {OLPaginatedData.map((UT) => (
                                 <tr key={UT._id} className="hover">
                                 <td>{UT.nom}</td>
                                 <td>
-                                    <UniteTarifForm key={`edit-form-${UT._id}`} isEdit={true} id={UT._id}/>
+                                    <button className="btn btn-accent btn-sm mr-2">Modifier</button>
                                     <button className="btn btn-error btn-sm" onClick={() => showAlert(UT._id, setId)}>Supprimer</button>
                                 </td>
                                 </tr>
@@ -93,10 +93,10 @@ const GestionUniteTarification = () => {
                         </table>
                     </div>
                 </div>
-                <Pagination currentPage={UTCurrentPage} totalPages={UTTotalPages} onPageChange={UTHandlePageChange}/>
+                <Pagination currentPage={OLCurrentPage} totalPages={OLTotalPages} onPageChange={OLHandlePageChange}/>
             </DataWrapper>
         </div>
     );
 }
 
-export default GestionUniteTarification;
+export default GestionOptionLocation;
