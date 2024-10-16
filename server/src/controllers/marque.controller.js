@@ -129,6 +129,7 @@ const getMarquesWithTheirModeles = async (req, res) => {
         const marques = await Marque.find().lean()
         const marquesWithModels = await Promise.all(marques.map(async (marque) => {
             const modeles = await Modele.find({marqueId: marque._id}).lean()
+            return {...marque, modeles}
         }))
 
         res.status(200).json(marquesWithModels)
@@ -142,5 +143,6 @@ module.exports = {
     getMarques,
     getMarqueById,
     updateMarque,
-    deleteMarque
+    deleteMarque,
+    getMarquesWithTheirModeles
 }

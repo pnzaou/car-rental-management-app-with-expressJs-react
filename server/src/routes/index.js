@@ -6,7 +6,7 @@ const { addDroit, getDroits, updateDroit, deleteDroit } = require('../controller
 const { addProfil, getProfils, getProfilDetails, updateProfil, updateProfilDroits, deleteProfil, getProfil } = require('../controllers/profil.controller')
 const { addUser, getUsers, login, getUserDetails, deleteUser, toggleUserState, getAuthUserDetails, requestPasswordChange, confirmPasswordChange } = require('../controllers/user.controller')
 const { addCategorie, updateCategorie, getCategories, deleteCategorie, getCategorieById } = require('../controllers/categorie.controller')
-const { addMarque, getMarques, deleteMarque, updateMarque, getMarqueById } = require('../controllers/marque.controller')
+const { addMarque, getMarques, deleteMarque, updateMarque, getMarqueById, getMarquesWithTheirModeles } = require('../controllers/marque.controller')
 const { addModele, getModeles, updateModele, deleteModele } = require('../controllers/modele.controller')
 const { addVoiture, getVoitues, updateVoiture, deleteVoiture } = require('../controllers/voiture.controller')
 const { signUp, signIn, getClients, updateAcountDetails, changePassword } = require('../controllers/client.controller')
@@ -70,6 +70,7 @@ router.route('/api/marque/:id')
     .get(getMarqueById)
     .put(uploadSingle, updateMarque)
     .delete(deleteMarque)
+router.get('/api/marques_and_their_modeles', getMarquesWithTheirModeles)
 
 
 //Routes liées aux MODELES
