@@ -1,10 +1,11 @@
 import { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import TokenContext from '../../../contexts/token.context';
+import toast from 'react-hot-toast';
 
 const AjoutVehicule = () => {
     const {token} = useContext(TokenContext)
-    const { register, handleSubmit, setValue, watch } = useForm();
+    const { register, handleSubmit, watch, formState: {errors} } = useForm();
     const [categories, setCategories] = useState([]);
     const [modeles, setModeles] = useState([]);
     const [unites, setUnites] = useState([]);
@@ -22,13 +23,14 @@ const AjoutVehicule = () => {
       .then(data => setCategories(data.data));
 
     // Fetch modèles
-    fetch('http://localhost:5000/api/modeles', {
+    fetch('http://localhost:5000/api/marques_and_their_modeles', {
         headers: {
             authorization: token
         }
     })
       .then(res => res.json())
-      .then(data => setModeles(data.data));
+      .then(data => {
+        setModeles(data)});
 
     // Fetch unités
     fetch('http://localhost:5000/api/unites', {
@@ -45,27 +47,44 @@ const AjoutVehicule = () => {
       .then(data => setOptions(data.data));
   }, []);
 
-  const onSubmit = (data) => {
-    const selectedOptions = options
+  const onSubmit = async (data) => {
+    try {
+      const selectedOptions = options
       .filter(option => data[`option_${option._id}`])
       .map(option => ({
         optionLocationId: option._id,
         tarifOption: data[`tarifOption_${option._id}`] || 0,
       }));
 
-    const formData = new FormData();
-    Object.keys(data).forEach(key => {
-      formData.append(key, data[key]);
-    });
-    formData.append('selectedOptions', JSON.stringify(selectedOptions));
+      const formData = new FormData();
 
-    // Submit the form
-    fetch('http://localhost:5000/api/voitures', {
-      method: 'POST',
-      body: formData,
-    })
-      .then(res => res.json())
-      .then(response => console.log(response));
+      Object.keys(data).forEach(key => {
+        if (key !== 'images') {
+          formData.append(key, data[key]);
+        }
+      });
+
+      if (data.images && data.images.length > 0) {
+        Array.from(data.images).forEach((file) => {
+          formData.append(`images`, file); 
+        });
+      }
+
+      formData.append('selectedOptions', JSON.stringify(selectedOptions));
+
+      // Submit the form
+      const rep = await fetch('http://localhost:5000/api/voitures', {
+        method: 'POST',
+        body: formData,
+      })
+      const response = await rep.json()
+      toast.success(response.message, {
+        position: 'bottom-right'
+      })
+      console.log(response)
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   const handleUniteChange = (e) => {
@@ -75,14 +94,16 @@ const AjoutVehicule = () => {
   // Utilisation de `watch` pour suivre les cases à cocher des options
   const watchOptions = watch();
 
+  const watchUniteTarification = watch('uniteTarificationId');
+
   return (
     <div className="container mx-auto p-9 bg-base-100 rounded-box shadow-md">
       <h1 className="text-2xl mb-4">Ajouter une Voiture</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" encType="multipart/form-data">
         {/* Immatriculation et Date de Mise en Circulation */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="label" htmlFor="immatriculation">Immatriculation</label>
+            <label className="label" htmlFor="immatriculation">Immatriculation (Si il y&apos;a)</label>
             <input
               type="text"
               id="immatriculation"
@@ -105,11 +126,13 @@ const AjoutVehicule = () => {
         {/* Type de Carburant et Capacité d'Assise */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="label" htmlFor="typeCarburant">Type de Carburant</label>
+            <label className="label" htmlFor="typeCarburant">Type de Carburant*</label>
             <select
               id="typeCarburant"
               className="select select-bordered w-full"
-              {...register('typeCarburant')}
+              {...register('typeCarburant', {
+                required: true
+              })}
             >
               <option value="">Sélectionner un type de carburant</option>
               <option value="essence">Essence</option>
@@ -117,28 +140,42 @@ const AjoutVehicule = () => {
               <option value="électrique">Électrique</option>
               <option value="hybride">Hybride</option>
             </select>
+              {errors.typeCarburant && <span className="
+                    mt-2 text-sm text-red-500
+                ">
+                    Champ requis! Veuillez selectionner une option
+                </span>}
           </div>
           <div>
-            <label className="label" htmlFor="capaciteDassise">Capacité d&apos;Assise</label>
+            <label className="label" htmlFor="capaciteDassise">Capacité d&apos;Assise*</label>
             <input
               type="number"
               id="capaciteDassise"
               placeholder="Capacité d'assise"
               className="input input-bordered w-full"
               min="1"
-              {...register('capaciteDassise')}
+              {...register('capaciteDassise', {
+                required: true
+              })}
             />
+            {errors.capaciteDassise && <span className="
+                  mt-2 text-sm text-red-500
+              ">
+                  Champ requis! Veuillez renseigner la capacité d&apos;assise
+              </span>}
           </div>
         </div>
 
         {/* Catégories et Modèles */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="label" htmlFor="categorieId">Catégorie</label>
+            <label className="label" htmlFor="categorieId">Catégorie*</label>
             <select
               id="categorieId"
               className="select select-bordered w-full"
-              {...register('categorieId')}
+              {...register('categorieId', {
+                required: true
+              })}
             >
               <option value="">Sélectionner une catégorie</option>
               {categories.map(cat => (
@@ -147,28 +184,44 @@ const AjoutVehicule = () => {
                 </option>
               ))}
             </select>
+            {errors.categorieId && <span className="
+                  mt-2 text-sm text-red-500
+              ">
+                  Champ requis! Veuillez selectionner une catégorie
+              </span>}
           </div>
           <div>
-            <label className="label" htmlFor="modeleId">Modèle</label>
+            <label className="label" htmlFor="modeleId">Modèle*</label>
             <select
               id="modeleId"
               className="select select-bordered w-full"
-              {...register('modeleId')}
+              {...register('modeleId', {
+                required: true
+              })}
             >
               <option value="">Sélectionner un modèle</option>
-              {modeles.map(mod => (
-                <option key={mod._id} value={mod._id}>
-                  {mod.nom}
-                </option>
+              {modeles.map(marque => (
+                <optgroup key={marque._id} label={marque.nom}>
+                  {marque.modeles.map(modele => (
+                    <option key={modele._id} value={modele._id}>
+                      {modele.nom}
+                    </option>
+                  ))}
+                </optgroup>
               ))}
             </select>
+            {errors.modeleId && <span className="
+                  mt-2 text-sm text-red-500
+              ">
+                  Champ requis! Veuillez selectionner un modèle
+              </span>}
           </div>
         </div>
 
         {/* Unité de tarification et Tarif Location */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="label" htmlFor="uniteTarificationId">Unité de tarification</label>
+            <label className="label" htmlFor="uniteTarificationId">Unité de tarification (En cas de location)</label>
             <select
               id="uniteTarificationId"
               className="select select-bordered w-full"
@@ -191,8 +244,15 @@ const AjoutVehicule = () => {
               placeholder="Tarif Location"
               className="input input-bordered w-full"
               disabled={!tarifEnabled}
-              {...register('tarifLocation')}
+              {...register('tarifLocation', {
+                required: watchUniteTarification ? "Champ requis si une unité est sélectionnée" : false,
+              })}
             />
+            {errors.tarifLocation && <span className="
+                  mt-2 text-sm text-red-500
+              ">
+                  {errors.tarifLocation.message}
+              </span>}
           </div>
         </div>
 
@@ -231,6 +291,18 @@ const AjoutVehicule = () => {
           </div>
         </div>
 
+        {/* Quantité */}
+        <div>
+          <label className="label" htmlFor="capaciteDassise">Quantité (En cas de vente sans plaque d&apos;immatriculation)</label>
+          <input
+            type="number"
+            id="capaciteDassise"
+            placeholder="Capacité d'assise"
+            className="input input-bordered w-full"
+            min="1"
+            {...register('quantite')}
+          />
+        </div>   
         {/* Images */}
         <div>
           <label className="label" htmlFor="images">Images</label>
@@ -239,8 +311,15 @@ const AjoutVehicule = () => {
             id="images"
             multiple
             className="file-input file-input-bordered w-full"
-            {...register('images')}
+            {...register('images', {
+                required: true
+              })}
           />
+          {errors.images && <span className="
+              mt-2 text-sm text-red-500
+          ">
+              Champ requis! Veuillez renseigner la tarification
+          </span>}
         </div>
 
         {/* Submit */}

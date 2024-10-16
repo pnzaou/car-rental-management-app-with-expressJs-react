@@ -25,13 +25,15 @@ const addVoiture = async (req, res) => {
         immatriculation, 
         DateMiseCirculation, 
         typeCarburant, 
-        capaciteDassise, 
+        capaciteDassise,
+        quantite, 
         categorieId, 
         modeleId,
         selectedOptions,
         uniteTarificationId,
         tarifLocation
     } = req.body
+    let rep
 
     const images = req.files.map(image => `${req.protocol}://${req.get('host')}/uploads/${image.filename}`)
     try {
@@ -41,23 +43,28 @@ const addVoiture = async (req, res) => {
             DateMiseCirculation,
             typeCarburant,
             capaciteDassise,
+            quantite,
             categorieId,
             modeleId
         })
 
-        const rep1 = await VUT.create({uniteTarificationId, tarifLocation})
+        if(uniteTarificationId) {
+            rep = await VUT.create({uniteTarificationId, voitureId: voiture._id, tarifLocation})
+            console.log(rep)
+        }
 
-        const optionPromises = JSON.parse(selectedOptions).map(option => {
-            return VOL.create({
-                tarifOption: option.tarifOption,
-                voitureId: voiture._id,
-                optionLocationId: option.optionLocationId
+        if(selectedOptions) {
+            const optionPromises = JSON.parse(selectedOptions).map(option => {
+                return VOL.create({
+                    tarifOption: option.tarifOption,
+                    voitureId: voiture._id,
+                    optionLocationId: option.optionLocationId
+                })
             })
-        })
-
-        const rep2 = await Promise.all(optionPromises)
-        
-        console.log(rep1, rep2);
+    
+            rep = await Promise.all(optionPromises)
+            console.log(rep)
+        }
 
         const msg = "Voiture enregistrée avec succès"
         return res.status(201).json({message: msg, data: voiture})
