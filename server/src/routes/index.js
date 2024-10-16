@@ -70,7 +70,7 @@ router.route('/api/marque/:id')
     .get(getMarqueById)
     .put(uploadSingle, updateMarque)
     .delete(deleteMarque)
-router.get('/api/marques_and_their_modeles', getMarquesWithTheirModeles)
+router.get('/api/marques_and_their_modeles', verifyToken, getMarquesWithTheirModeles)
 
 
 //Routes liées aux MODELES
