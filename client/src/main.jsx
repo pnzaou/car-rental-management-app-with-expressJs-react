@@ -28,6 +28,7 @@ import ConfirmPasswordChange from "./pages/confirm-password-change";
 import AjoutVehicule from "./pages/dashboards/members-dashbord/Ajout-vehicule";
 import GestionUniteTarification from "./pages/dashboards/members-dashbord/Gestion-unite-tarification";
 import GestionOptionLocation from "./pages/dashboards/members-dashbord/Gestion-option-location";
+import ListeVehicules from "./pages/dashboards/members-dashbord/Liste-vehicules";
 
 const queryClient = new QueryClient()
 
@@ -86,6 +87,10 @@ const router = createBrowserRouter([
       {
         path: "optionsdelocation",
         element: <GestionOptionLocation/>
+      },
+      {
+        path: "vehicules",
+        element: <ListeVehicules/>
       },
       {
         path: "vehicules/ajout",

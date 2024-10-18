@@ -1,4 +1,5 @@
 const Voiture = require('../models/Voiture.model')
+const Modele = require('../models/Modele.model')
 const VUT = require('../models/voitureUniteTarification.model')
 const VOL = require('../models/voitureOptionLocation.model')
 const { deleteLogo } = require('../services')
@@ -83,9 +84,13 @@ const addVoiture = async (req, res) => {
  */
 const getVoitues = async (req, res) => {
     try {
-        const rep = await Voiture.find()
+        const rep = await Voiture.find().lean()
+        const voitureWithModele = await Promise.all(rep.map(async (voiture) => {
+            const {nom} = await Modele.findById(voiture.modeleId, {nom: 1})
+            return {...voiture, modele: nom}
+        }))
         const msg = 'Voitures récupérés avec succès'
-        return res.status(200).json({message: msg, data: rep})
+        return res.status(200).json({message: msg, data: voitureWithModele})
     } catch (error) {
         const msg = 'Erreur lors de la récupération des données'
         return res.status(500).json({message: msg, erreur: error})

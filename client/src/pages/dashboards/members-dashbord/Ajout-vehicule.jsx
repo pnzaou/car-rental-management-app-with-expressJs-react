@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import TokenContext from '../../../contexts/token.context';
 import toast from 'react-hot-toast';
+import { Link } from 'react-router-dom';
 
 const AjoutVehicule = () => {
     const {token} = useContext(TokenContext)
@@ -98,6 +99,13 @@ const AjoutVehicule = () => {
 
   return (
     <div className="container mx-auto p-9 bg-base-100 rounded-box shadow-md">
+      <div className="breadcrumbs text-sm">
+        <ul>
+            <li><Link to="/members-dashboard">Tableau de bord</Link></li>
+            <li><Link to="/members-dashboard/vehicules">Liste des véhicules</Link></li>
+            <li>Ajout</li>
+        </ul>
+      </div>
       <h1 className="text-2xl mb-4">Ajouter une Voiture</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" encType="multipart/form-data">
         {/* Immatriculation et Date de Mise en Circulation */}
@@ -178,7 +186,7 @@ const AjoutVehicule = () => {
               })}
             >
               <option value="">Sélectionner une catégorie</option>
-              {categories.map(cat => (
+              {categories?.map(cat => (
                 <option key={cat._id} value={cat._id}>
                   {cat.nom}
                 </option>
@@ -200,7 +208,7 @@ const AjoutVehicule = () => {
               })}
             >
               <option value="">Sélectionner un modèle</option>
-              {modeles.map(marque => (
+              {modeles?.map(marque => (
                 <optgroup key={marque._id} label={marque.nom}>
                   {marque.modeles.map(modele => (
                     <option key={modele._id} value={modele._id}>
@@ -229,7 +237,7 @@ const AjoutVehicule = () => {
               onChange={handleUniteChange}
             >
               <option value="">Sélectionner une unité</option>
-              {unites.map(unite => (
+              {unites?.map(unite => (
                 <option key={unite._id} value={unite._id}>
                   {unite.nom}
                 </option>
@@ -260,7 +268,7 @@ const AjoutVehicule = () => {
         <div>
           <label className="label">Options de location (cliquez pour sélectionner/déselectionner)</label>
           <div className="grid grid-cols-2 gap-4">
-            {options.map(option => (
+            {options?.map(option => (
               <div key={option._id} className="form-control">
                 <label
                   className={`cursor-pointer label ${
