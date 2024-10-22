@@ -4,6 +4,7 @@ import TokenContext from "../../../contexts/token.context";
 import usePaginatedFilter from "../../../hooks/usePaginatedFilter";
 import DataWrapper from "../../../components/DataWrapper";
 import { Link } from "react-router-dom";
+import Pagination from "../../../components/Pagination";
 
 const ListeVehicules = () => {
     const {token} = useContext(TokenContext)
@@ -15,7 +16,7 @@ const ListeVehicules = () => {
         handlePageChange,
         paginatedData,
         searchItem,
-        setCurrentPage,
+        //setCurrentPage,
         setSearchItem,
         totalPages
     } = usePaginatedFilter(data?.data, "modele", voitParPage)
@@ -99,6 +100,8 @@ const ListeVehicules = () => {
               </table>
             </div>
           </div>
+
+          <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange}/>
         </DataWrapper>
       </div>
     );
