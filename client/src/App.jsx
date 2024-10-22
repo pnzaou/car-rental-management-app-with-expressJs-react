@@ -1,10 +1,12 @@
-import toast from "react-hot-toast"
-
+import Header from "./components/Header"
+import Hero from "./components/Hero"
 
 const App = () => {
-  const notify = () => toast('Here is your toast.')
   return (
-    <button className="btn" onClick={notify}>Hello daisyUI</button>
+    <div>
+        <Header/>
+        <Hero/>
+    </div>
   )
 }
 
