@@ -1,6 +1,7 @@
+import PropTypes from "prop-types"
 import Search from "./Search";
 
-const Hero = () => {
+const Hero = ({categories, marques}) => {
     return (
         <div>
             <div className="flex flex-col items-center p-10 py-20
@@ -8,7 +9,7 @@ const Hero = () => {
                 <h2 className="text-lg">Trouvez des voitures à vendres et à louer près de chez vous</h2>
                 <h2 className="text-[60px] font-bold">Trouvez la voiture de vos rêves</h2>
 
-                <Search/>
+                <Search categories={categories} marques={marques}/>
                 <img src="/img/subscribe-to-tesla-model-3-performance-long-range.png" 
                     className="mt-10"
                 />
@@ -18,3 +19,8 @@ const Hero = () => {
 }
 
 export default Hero;
+
+Hero.propTypes = {
+    categories: PropTypes.object,
+    marques: PropTypes.object
+}

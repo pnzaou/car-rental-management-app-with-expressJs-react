@@ -52,7 +52,7 @@ router.get('/api/user', verifyToken, getAuthUserDetails)
 
 
 
-//Routes liées aux CATEGORIES
+//Routes privées liées aux CATEGORIES
 router.route('/api/categories')
     .post(verifyToken, addCategorie)
     .get(verifyToken, getCategories)
@@ -61,8 +61,10 @@ router.route('/api/categorie/:id')
     .put(verifyToken, updateCategorie)
     .delete(verifyToken, deleteCategorie)
 
+//Routes publiques liées aux CATEGORIES
+router.get('/api/public/categories', getCategories)
 
-//Routes liées aux MARQUES
+//Routes privées liées aux MARQUES
 router.route('/api/marques')
     .post(uploadSingle, addMarque)
     .get(getMarques)
@@ -72,14 +74,18 @@ router.route('/api/marque/:id')
     .delete(deleteMarque)
 router.get('/api/marques_and_their_modeles', verifyToken, getMarquesWithTheirModeles)
 
+//Routes publiques liées aux MARQUES
+router.get("/api/public/marques", getMarques)
 
-//Routes liées aux MODELES
+//Routes privées liées aux MODELES
 router.post('/api/modeles/:marqueId', addModele)
 router.get('/api/modeles/:idMarque', getModeles)
 router.route('/api/modele/:idMarque/:id')
     .put(updateModele)
     .delete(deleteModele)
 
+//Routes publiques liées aux MODELES
+router.get("/api/public/modeles/:idMarque", getModeles)
 
 //Routes liées aux VOITURES
 router.route('/api/voitures')
