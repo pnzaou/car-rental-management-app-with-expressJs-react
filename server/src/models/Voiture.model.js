@@ -5,6 +5,7 @@ const voitureModel = new Schema({
     immatriculation: {type: String, default: null, unique: true},
     images: {type: [String], required: true},
     DateMiseCirculation: {type: Date, default: null},
+    typeBoite: {type: String, required: true},
     typeCarburant: {type: String, required: true},
     capaciteDassise: {type: Number, required: true},
     quantite: {type: Number, default: null},

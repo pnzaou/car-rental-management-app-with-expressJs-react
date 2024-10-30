@@ -24,7 +24,8 @@ const { deleteLogo } = require('../services')
 const addVoiture = async (req, res) => {
     const { 
         immatriculation, 
-        DateMiseCirculation, 
+        DateMiseCirculation,
+        typeBoite, 
         typeCarburant, 
         capaciteDassise,
         quantite, 
@@ -42,6 +43,7 @@ const addVoiture = async (req, res) => {
             immatriculation,
             images,
             DateMiseCirculation,
+            typeBoite,
             typeCarburant,
             capaciteDassise,
             quantite,
@@ -85,12 +87,13 @@ const addVoiture = async (req, res) => {
 const getVoitues = async (req, res) => {
     try {
         const rep = await Voiture.find().lean()
-        const voitureWithModele = await Promise.all(rep.map(async (voiture) => {
+        const voitureWithModeleAndLocPrice = await Promise.all(rep.map(async (voiture) => {
             const {nom} = await Modele.findById(voiture.modeleId, {nom: 1})
-            return {...voiture, modele: nom}
+            const [tarifLocation] = await VUT.find({voitureId: voiture._id}, {tarifLocation: 1})
+            return {...voiture, modele: nom, prixLocation: tarifLocation.tarifLocation}
         }))
         const msg = 'Voitures récupérés avec succès'
-        return res.status(200).json({message: msg, data: voitureWithModele})
+        return res.status(200).json({message: msg, data: voitureWithModeleAndLocPrice})
     } catch (error) {
         const msg = 'Erreur lors de la récupération des données'
         return res.status(500).json({message: msg, erreur: error})
@@ -102,7 +105,8 @@ const updateVoiture = async (req, res) => {
     const { id } = req.params
     const { 
         immatriculation, 
-        DateMiseCirculation, 
+        DateMiseCirculation,
+        typeBoite, 
         typeCarburant, 
         capaciteDassise, 
         categorieId, 
@@ -115,6 +119,7 @@ const updateVoiture = async (req, res) => {
         const updateData = {
             immatriculation, 
             DateMiseCirculation, 
+            typeBoite,
             typeCarburant, 
             capaciteDassise, 
             categorieId, 

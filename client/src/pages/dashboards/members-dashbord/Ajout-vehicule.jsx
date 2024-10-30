@@ -76,6 +76,7 @@ const AjoutVehicule = () => {
       // Submit the form
       const rep = await fetch('http://localhost:5000/api/voitures', {
         method: 'POST',
+        headers: {authorization: token},
         body: formData,
       })
       const response = await rep.json()
@@ -131,8 +132,26 @@ const AjoutVehicule = () => {
           </div>
         </div>
 
-        {/* Type de Carburant et Capacité d'Assise */}
+        {/* Type de Boîte, Type de Carburant, Capacité d'Assise et Quantité */}
         <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="label" htmlFor="typeCarburant">Type de Boîte (Automatique, Manuelle, ...)*</label>
+            <input
+              type="text"
+              id="typeBoite"
+              placeholder="Type de Boîte"
+              className="input input-bordered w-full"
+              min="1"
+              {...register('typeBoite', {
+                required: true
+              })}
+            />
+            {errors.capaciteDassise && <span className="
+                  mt-2 text-sm text-red-500
+              ">
+                  Champ requis! Veuillez renseigner le type de boîte.
+              </span>}
+          </div>
           <div>
             <label className="label" htmlFor="typeCarburant">Type de Carburant*</label>
             <select
@@ -172,6 +191,17 @@ const AjoutVehicule = () => {
                   Champ requis! Veuillez renseigner la capacité d&apos;assise
               </span>}
           </div>
+          <div>
+            <label className="label" htmlFor="capaciteDassise">Quantité (En cas de vente sans plaque d&apos;immatriculation)</label>
+            <input
+              type="number"
+              id="capaciteDassise"
+              placeholder="Capacité d'assise"
+              className="input input-bordered w-full"
+              min="1"
+              {...register('quantite')}
+            />
+          </div> 
         </div>
 
         {/* Catégories et Modèles */}
@@ -298,19 +328,7 @@ const AjoutVehicule = () => {
             ))}
           </div>
         </div>
-
-        {/* Quantité */}
-        <div>
-          <label className="label" htmlFor="capaciteDassise">Quantité (En cas de vente sans plaque d&apos;immatriculation)</label>
-          <input
-            type="number"
-            id="capaciteDassise"
-            placeholder="Capacité d'assise"
-            className="input input-bordered w-full"
-            min="1"
-            {...register('quantite')}
-          />
-        </div>   
+          
         {/* Images */}
         <div>
           <label className="label" htmlFor="images">Images</label>

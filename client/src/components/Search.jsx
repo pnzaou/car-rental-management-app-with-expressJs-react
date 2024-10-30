@@ -96,8 +96,9 @@ const Search = ({ categories, marques }) => {
             </select>
 
             {/* Search Icon */}
-            <div>
-                <CiSearch className="text-[40px] bg-emerald-600 rounded-full p-2 text-white hover:scale-105 transition-all cursor-pointer" />
+            <div className="">
+                <CiSearch className="hidden md:block text-[40px] bg-emerald-600 rounded-full p-2 text-white hover:scale-105 transition-all cursor-pointer" />
+                <button className="btn sm:btn-wide bg-emerald-600 hover:bg-emerald-700 text-white md:hidden">Rechercher</button>
             </div>
         </div>
     );

@@ -6,7 +6,11 @@ export default {
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      screens: {
+        'hero-background-color': {'max': '339px'}
+      }
+    },
   },
   plugins: [
     require('daisyui')

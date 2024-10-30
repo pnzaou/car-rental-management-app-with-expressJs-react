@@ -89,12 +89,14 @@ router.get("/api/public/modeles/:idMarque", getModeles)
 
 //Routes liées aux VOITURES
 router.route('/api/voitures')
-    .post(uploadMultiple, addVoiture)
-    .get(getVoitues)
+    .post(verifyToken, uploadMultiple, addVoiture)
+    .get(verifyToken, getVoitues)
 router.route('/api/voiture/:id')
     .put(uploadMultiple, updateVoiture)
     .delete(deleteVoiture)
 
+//Routes publiques liées aux VOITURES
+router.get('/api/public/voitures', getVoitues)
 
 //Routes liées aux CLIENTS
 router.route('/api/clients')
