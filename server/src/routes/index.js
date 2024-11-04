@@ -8,7 +8,7 @@ const { addUser, getUsers, login, getUserDetails, deleteUser, toggleUserState, g
 const { addCategorie, updateCategorie, getCategories, deleteCategorie, getCategorieById } = require('../controllers/categorie.controller')
 const { addMarque, getMarques, deleteMarque, updateMarque, getMarqueById, getMarquesWithTheirModeles } = require('../controllers/marque.controller')
 const { addModele, getModeles, updateModele, deleteModele } = require('../controllers/modele.controller')
-const { addVoiture, getVoitues, updateVoiture, deleteVoiture } = require('../controllers/voiture.controller')
+const { addVoiture, getVoitues, updateVoiture, deleteVoiture, getVoituresDetailsForClient } = require('../controllers/voiture.controller')
 const { signUp, signIn, getClients, updateAcountDetails, changePassword } = require('../controllers/client.controller')
 const { addOption, getOptions, updateOption, deleteOption } = require('../controllers/optionDeLocation.controller')
 const { addUnite, getUnites, updateUnite, deleteUnite } = require('../controllers/uniteTarification.controller')
@@ -97,6 +97,7 @@ router.route('/api/voiture/:id')
 
 //Routes publiques liées aux VOITURES
 router.get('/api/public/voitures', getVoitues)
+router.get('/api/public/voiture/:id', getVoituresDetailsForClient)
 
 //Routes liées aux CLIENTS
 router.route('/api/clients')

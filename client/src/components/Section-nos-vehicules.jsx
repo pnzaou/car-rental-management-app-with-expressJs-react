@@ -21,7 +21,7 @@ const SectionNosVehicules = ({voitures}) => {
             <Swiper slidesPerView={1}
                 spaceBetween={10}
                 autoplay={{
-                    delay: 2500,
+                    delay: 3500,
                     disableOnInteraction: false,
                 }}
                 loop={true}
@@ -43,43 +43,45 @@ const SectionNosVehicules = ({voitures}) => {
                     },
                 }}
                 modules={[Autoplay, Pagination]}
-                className="mySwiper"
+                className="mySwiper z-10"
             >
                 {voitures?.data.map(voiture => (
                     <SwiperSlide key={voiture._id}>
-                        <div className="rounded-xl bg-white border hover:shadow-md cursor-pointer mb-10">
-                            <div>
-                                <img src={voiture.images[0]} width={300} height={250}
-                                    className="rounded-t-xl object-center h-[200px] w-full"
-                                />
-                            </div>
-                            <div className="p-4">
-                                <h2 className="font-bold text-black text-lg mb-2">{voiture.modele}</h2>
-                                <div className="border-t border-gray-400 my-1"></div>
-                                <div className="grid grid-cols-3 mt-5">
-                                    <div className="flex flex-col items-center">
-                                        <LuFuel className="text-lg mb-2" />
-                                        <h2>{voiture.typeCarburant}</h2>
+                        <Link to={`/détails-voitures/${voiture._id}`}>
+                            <div className="rounded-xl bg-white border hover:shadow-md cursor-pointer mb-10">
+                                <div>
+                                    <img src={voiture.images[0]} width={300} height={250}
+                                        className="rounded-t-xl object-center h-[200px] w-full"
+                                    />
+                                </div>
+                                <div className="p-4">
+                                    <h2 className="font-bold text-black text-lg mb-2">{voiture.modele}</h2>
+                                    <div className="border-t border-gray-400 my-1"></div>
+                                    <div className="grid grid-cols-3 mt-5">
+                                        <div className="flex flex-col items-center">
+                                            <LuFuel className="text-lg mb-2" />
+                                            <h2>{voiture.typeCarburant}</h2>
+                                        </div>
+                                        <div className="flex flex-col items-center">
+                                            <GiGearStickPattern className="text-lg mb-2" />
+                                            <h2>{voiture.typeBoite}</h2>
+                                        </div>
+                                        <div className="flex flex-col items-center">
+                                            <HiUserGroup className="text-lg mb-2" />
+                                            <h2>{voiture.capaciteDassise} Places</h2>
+                                        </div>
                                     </div>
-                                    <div className="flex flex-col items-center">
-                                        <GiGearStickPattern className="text-lg mb-2" />
-                                        <h2>{voiture.typeBoite}</h2>
-                                    </div>
-                                    <div className="flex flex-col items-center">
-                                        <HiUserGroup className="text-lg mb-2" />
-                                        <h2>{voiture.capaciteDassise} Places</h2>
+                                    <div className="border-t border-gray-400 my-1"></div>
+                                    <div className="flex items-center justify-between">
+                                        <h2 className="font-semibold text-xl">{voiture.prixLocation}F/J</h2>
+                                        <Link className="text-primary text-sm flex gap-2 items-center" to={`/détails-voitures/${voiture._id}`}>
+                                            Voir Les Détails
+                                            <MdOpenInNew />
+                                        </Link>
                                     </div>
                                 </div>
-                                <div className="border-t border-gray-400 my-1"></div>
-                                <div className="flex items-center justify-between">
-                                    <h2 className="font-semibold text-xl">{voiture.prixLocation}F/J</h2>
-                                    <Link className="text-primary text-sm flex gap-2 items-center" to="">
-                                        Voir Les Détails
-                                        <MdOpenInNew />
-                                    </Link>
-                                </div>
                             </div>
-                        </div>
+                        </Link>
                     </SwiperSlide>
                 ))}
             </Swiper>

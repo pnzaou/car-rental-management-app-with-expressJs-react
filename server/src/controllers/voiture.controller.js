@@ -1,7 +1,11 @@
 const Voiture = require('../models/Voiture.model')
+const Categorie = require('../models/Categorie.model')
+const Marque = require('../models/Marque.model')
 const Modele = require('../models/Modele.model')
 const VUT = require('../models/voitureUniteTarification.model')
+const UT = require('../models/uniteTarification.model')
 const VOL = require('../models/voitureOptionLocation.model')
+const OL = require('../models/optionLocation.model')
 const { deleteLogo } = require('../services')
 
 /**
@@ -190,9 +194,35 @@ const deleteVoiture = async (req, res) => {
     }
 }
 
+const getVoituresDetailsForClient = async (req, res) => {
+    const {id} = req.params
+    try {
+        const voiture = await Voiture.findById(id, {immatriculation: 0}).lean()
+        const categorie = await Categorie.findById(voiture.categorieId, {nom: 1, description: 1})
+        const modele = await Modele.findById(voiture.modeleId, {nom: 1, marqueId:1})
+        const marque = await Marque.findById(modele.marqueId, {logo: 1, nom: 1, paysDorigine: 1})
+        const tarif = await VUT.find({voitureId: voiture._id}).lean()
+        const unites = await Promise.all(tarif.map(async (t) => {
+            return await UT.findById(t.uniteTarificationId, {nom: 1})
+        }))
+        const tarifOp = await VOL.find({voitureId: voiture._id}, {tarifOption: 1, optionLocationId: 1}).lean()
+        const options = await Promise.all(tarifOp.map(async (TO) => {
+            return await OL.findById(TO.optionLocationId, {nom: 1})
+        }))
+
+        const msg = "Données récupérées avec succès"
+        return res.status(200).json({message: msg, data: {...voiture, categorie, marque, modele, tarif, unites, tarifOp, options}})
+        
+    } catch (error) {
+        const msg = "Erreur lors de récupération des données"
+        return res.status(500).json({message: msg, erreur: error})
+    }
+}
+
 module.exports = {
     addVoiture,
     getVoitues,
     updateVoiture,
-    deleteVoiture
+    deleteVoiture,
+    getVoituresDetailsForClient
 } 

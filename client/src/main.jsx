@@ -29,13 +29,18 @@ import AjoutVehicule from "./pages/dashboards/members-dashbord/Ajout-vehicule";
 import GestionUniteTarification from "./pages/dashboards/members-dashbord/Gestion-unite-tarification";
 import GestionOptionLocation from "./pages/dashboards/members-dashbord/Gestion-option-location";
 import ListeVehicules from "./pages/dashboards/members-dashbord/Liste-vehicules";
+import DetailsVoiture from "./pages/Details-voiture";
 
 const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App/>
+    element: <TokenContextProvider><App/></TokenContextProvider>
+  },
+  {
+    path: "/détails-voitures/:id",
+    element: <TokenContextProvider><DetailsVoiture/></TokenContextProvider>
   },
   {
     path: "/members-login",

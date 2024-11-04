@@ -23,7 +23,7 @@ export const TokenContextProvider = ({children}) => {
     const logout = () => {
         setToken(null)
         localStorage.removeItem('auth_token')
-        return true
+        return !localStorage.getItem('auth_token') 
     }
 
     return (

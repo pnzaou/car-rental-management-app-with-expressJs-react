@@ -4,7 +4,6 @@ import PropTypes from 'prop-types'
 import {useForm} from "react-hook-form"
 import axios from 'axios'
 import toast from 'react-hot-toast'
-import { jwtDecode } from 'jwt-decode'
 import TokenContext from '../../../contexts/token.context'
 
 const LoginForm = ({url}) => {
@@ -23,7 +22,6 @@ const LoginForm = ({url}) => {
       : apiUrl = "http://localhost:5000/api/user/login";
       const rep = await axios.post(apiUrl, data)
       toast.success(rep.data.message)
-      console.log(jwtDecode(rep.data.token));
       login(rep.data.token)
       verif.includes("authentification") ? navigate("/") : navigate("/members-dashboard")
     } catch (error) {
