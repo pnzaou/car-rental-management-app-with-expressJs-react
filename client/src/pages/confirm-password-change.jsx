@@ -11,7 +11,6 @@ const ConfirmPasswordChange = () => {
         // Récupérer le token de l'URL
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
-        console.log(token);
 
         if (token) {
             // Envoyer une requête au backend pour confirmer le changement de mot de passe

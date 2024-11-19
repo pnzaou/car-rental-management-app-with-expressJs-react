@@ -1,8 +1,9 @@
 import PropTypes from "prop-types";
 
-const VoitureDetailsFeatures = ({data}) => {
+const VoitureDetailsFeatures = ({data, handeleCheckboxChange, pulse}) => {
+
     return (
-        <div className="mt-3 p-5 bg-white rounded-xl border shadow-md">
+        <div className={`mt-3 p-5 bg-white rounded-xl border shadow-md ${pulse && "animate-pulse"}`} id="options">
             <h2 className="font-medium text-2xl">Options de Locations</h2>
             <p className="mt-3 text-justify">Pour une expérience de location de voiture sur mesure, sélectionnez vos options préférées en cliquant dessus.</p>
 
@@ -17,6 +18,11 @@ const VoitureDetailsFeatures = ({data}) => {
                                     type="checkbox"
                                     className="peer hidden"
                                     value={tarif.tarifOption}
+                                    onChange={(e) => handeleCheckboxChange(
+                                        option._id,
+                                        tarif?.tarifOption,
+                                        e.target.checked
+                                    )}
                                 />
                                 <div className={`
                                     peer-checked:bg-sky-800 
@@ -52,6 +58,8 @@ VoitureDetailsFeatures.propTypes = {
             })
         ).isRequired,
     }).isRequired,
+    handeleCheckboxChange: PropTypes.func.isRequired,
+    pulse: PropTypes.bool.isRequired
 };
 
 export default VoitureDetailsFeatures;

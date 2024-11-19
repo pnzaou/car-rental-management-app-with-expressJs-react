@@ -30,6 +30,7 @@ import GestionUniteTarification from "./pages/dashboards/members-dashbord/Gestio
 import GestionOptionLocation from "./pages/dashboards/members-dashbord/Gestion-option-location";
 import ListeVehicules from "./pages/dashboards/members-dashbord/Liste-vehicules";
 import DetailsVoiture from "./pages/Details-voiture";
+import PassageReservation from "./pages/Passage-reservation";
 
 const queryClient = new QueryClient()
 
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
   {
     path: "/détails-voitures/:id",
     element: <TokenContextProvider><DetailsVoiture/></TokenContextProvider>
+  },
+  {
+    path: "/passer-réservation/:id",
+    element: <TokenContextProvider><PassageReservation/></TokenContextProvider>
   },
   {
     path: "/members-login",

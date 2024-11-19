@@ -8,7 +8,9 @@ export default {
   theme: {
     extend: {
       screens: {
-        'hero-background-color': {'max': '339px'}
+        'hero-background-color': {'max': '339px'},
+        'pop-up-options-lg': {'min': '768px'},
+        'pop-up-options-sm': {'max': '767px'},
       }
     },
   },
