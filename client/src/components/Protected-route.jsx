@@ -1,14 +1,30 @@
 import { useContext } from 'react'
 import TokenContext from '../contexts/token.context'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import { jwtDecode } from 'jwt-decode'
 
-export default function ProtectedRoute({children}) {
-
+export default function ProtectedRoute({children, redirectTo}) {
     const {token} = useContext(TokenContext)
+    const location = useLocation()
 
     if(!token) {
-        return <Navigate to="/members-login"/>
+      localStorage.setItem('previousURL', location.pathname + location.search + location.hash)
+      return <Navigate to={redirectTo}/>
+    }
+
+    try {
+      const {exp} = jwtDecode(token)
+      const currentTime = Math.floor(Date.now() / 1000)
+
+      if(exp < currentTime) {
+        localStorage.setItem('previousURL', location.pathname + location.search + location.hash)
+        localStorage.setItem("theme", "light")
+        return <Navigate to={redirectTo}/>
+      }
+    } catch (error) {
+      console.error('Token invalid:', error)
+      return <Navigate to={redirectTo}/>
     }
     
   return (
@@ -17,5 +33,6 @@ export default function ProtectedRoute({children}) {
 }
 
 ProtectedRoute.propTypes = {
-    children: PropTypes.node
+    children: PropTypes.node,
+    redirectTo: PropTypes.string.isRequired
 }

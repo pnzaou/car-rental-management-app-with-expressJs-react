@@ -39,9 +39,9 @@ const DetailsVoiture = () => {
         )
     }
 
-    const handeleCheckboxChange = (optionId, tarifOption, isChecked) => {
+    const handeleCheckboxChange = (optionId, tarifOption, volId, optionNom, isChecked) => {
         if (isChecked) {
-            setCheckedOptions([...checkedOptions, {optionId, tarifOption}])
+            setCheckedOptions([...checkedOptions, {optionId, optionNom, tarifOption, volId}])
             if(pulse) {
                 setPulse(false)
             }

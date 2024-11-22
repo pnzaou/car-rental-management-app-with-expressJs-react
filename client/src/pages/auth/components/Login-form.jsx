@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import {useForm} from "react-hook-form"
@@ -15,15 +15,31 @@ const LoginForm = ({url}) => {
   const emailRegex = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/
   let apiUrl = null
 
+  useEffect(() => {
+    if(localStorage.getItem('logout') === 'y') {
+      localStorage.removeItem('previousURL')
+    }
+  }, [])
+
   const onSubmit = async (data) => {
     try {
-      verif.includes("authentification")? 
-      apiUrl = "http://localhost:5000/api/client/signin" 
+      verif.includes("authentification")
+      ? apiUrl = "http://localhost:5000/api/client/signin" 
       : apiUrl = "http://localhost:5000/api/user/login";
+
       const rep = await axios.post(apiUrl, data)
       toast.success(rep.data.message)
       login(rep.data.token)
-      verif.includes("authentification") ? navigate("/") : navigate("/members-dashboard")
+
+      const previousURL = localStorage.getItem("previousURL")
+      if(previousURL){
+        localStorage.removeItem("previousURL")
+        navigate(previousURL)
+      } else {
+        verif.includes("authentification") 
+        ? navigate("/") 
+        : navigate("/members-dashboard")
+      }
     } catch (error) {
       console.log(error)
       toast.error(error.response.data.message)
@@ -130,5 +146,3 @@ LoginForm.propTypes = {
 }
 
 export default LoginForm
-
-

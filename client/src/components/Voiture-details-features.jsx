@@ -21,6 +21,8 @@ const VoitureDetailsFeatures = ({data, handeleCheckboxChange, pulse}) => {
                                     onChange={(e) => handeleCheckboxChange(
                                         option._id,
                                         tarif?.tarifOption,
+                                        tarif._id,
+                                        option.nom,
                                         e.target.checked
                                     )}
                                 />

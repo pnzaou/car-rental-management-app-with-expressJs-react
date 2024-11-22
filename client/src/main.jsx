@@ -45,7 +45,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/passer-réservation/:id",
-    element: <TokenContextProvider><PassageReservation/></TokenContextProvider>
+    element: <TokenContextProvider><ProtectedRoute redirectTo="/authentification"><PassageReservation/></ProtectedRoute></TokenContextProvider>
   },
   {
     path: "/members-login",
@@ -60,7 +60,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/members-dashboard",
-    element: <TokenContextProvider><ProtectedRoute><MemberDashboard/></ProtectedRoute></TokenContextProvider>,
+    element: <TokenContextProvider><ProtectedRoute redirectTo="/members-login"><MemberDashboard/></ProtectedRoute></TokenContextProvider>,
     children: [
       {
         path: "",
@@ -110,7 +110,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/members-dashboard/settings",
-    element: <TokenContextProvider><ProtectedRoute><Settings/></ProtectedRoute></TokenContextProvider>,
+    element: <TokenContextProvider><ProtectedRoute redirectTo="/members-login"><Settings/></ProtectedRoute></TokenContextProvider>,
     children: [
       {
         path: "",

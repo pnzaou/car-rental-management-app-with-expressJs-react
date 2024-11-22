@@ -18,11 +18,13 @@ export const TokenContextProvider = ({children}) => {
     const login = (newToken) => {
         setToken(newToken)
         localStorage.setItem('auth_token', newToken)
+        localStorage.removeItem('logout')
     }
 
     const logout = () => {
         setToken(null)
         localStorage.removeItem('auth_token')
+        localStorage.setItem('logout', 'y')
         return !localStorage.getItem('auth_token') 
     }
 
