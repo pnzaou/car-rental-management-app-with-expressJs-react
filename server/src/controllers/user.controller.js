@@ -4,29 +4,7 @@ const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
 const Profil = require('../models/Profil.model')
 const fs = require('fs')
-const { getEmailTemplate, transporter } = require('../services')
-
-const sendConfirmationEmail = async (userEmail, userName, confirmationLink) => {
-    const emailTemplate = getEmailTemplate("update-password-confirmation.html")
-
-    const emailContent = emailTemplate
-        .replace('{{username}}', userName)
-        .replace('{{confirmationLink}}', confirmationLink)
-
-    let mailOptions = {
-        from: 'perrinemmanuelnzaou@gmail.com',
-        to: userEmail,
-        subject: 'Confirmation de modification de mot de passe',
-        html: emailContent
-    }
-
-    try {
-        await transporter.sendMail(mailOptions)
-        console.log('Email envoyé avec succès.')
-    } catch (error) {
-        console.error('Erreur lors de l\'envoi de l\'email:', error)
-    }
-} 
+const { sendConfirmationEmail, transporter } = require('../services')
 
 /**
  * Crée un nouvel utilisateur avec un mot de passe haché.
@@ -198,9 +176,9 @@ const requestPasswordChange = async (req, res) => {
             const secret = fs.readFileSync('./.meow/meowPr.pem')
             const token = jwt.sign({userId: user._id, newPassword}, secret, {expiresIn: '1h', algorithm: "RS256"})
             const confirmationLink = `http://localhost:5173/confirm-password-change?token=${token}`;
-            await sendConfirmationEmail(user.email, user.prenom, confirmationLink)
+            await sendConfirmationEmail(user.email, user.prenom, confirmationLink, "update-password-confirmation.html", transporter)
 
-            return res.status(200).json({message: 'Email de confirmation envoyé. Veuillez vérifier votre boîte mail.'});
+            return res.status(200).json({message: 'Veuillez vérifier votre boîte mail.'});
                         
         }
 

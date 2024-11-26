@@ -105,7 +105,7 @@ const LoginForm = ({url}) => {
                 Champ requis! Minimum: 1 maj, 1 min, 1 chiffre, 1 spé, 8 car
               </span>}
               <Link
-                to="#"
+                to="/email-for-forgotten-password"
                 className="text-xs text-gray-600 hover:text-gray-900 text-end w-full mt-2"
               >
                 Mot de passe oublié?

@@ -1,17 +1,20 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import {useParams} from "react-router-dom"
 import {useQuery} from "react-query"
 import axios from "axios"
 import Header from "../components/Header"
 import Calendar  from "react-calendar"
 import "react-calendar/dist/Calendar.css"
+import TokenContext from "../contexts/token.context"
+import { reservationDescription } from "../services"
 
 const PassageReservation = () => {
+    const {token} = useContext(TokenContext)
     const [options, setOptions] = useState(() => {
         const urlParams = new URLSearchParams(window.location.search).get('options');
         return urlParams ? urlParams.split(", ").map(option => JSON.parse(option)) : []
     })    
-    const [prixTotal, setPrixTotal] = useState(() => {
+    const [montantTotal, setMontantTotal] = useState(() => {
         return options.length > 0 
             ? options.reduce((acc, cur) => acc + cur.tarifOption, 0) 
             : 0;
@@ -30,7 +33,6 @@ const PassageReservation = () => {
 
     const handleDateChange = (datesSelectionnees) => {
         setDates(datesSelectionnees)
-        console.log(datesSelectionnees.length);
         if(datesSelectionnees.length === 2){
             const diffTime = datesSelectionnees[1] - datesSelectionnees[0]
             const jours = Math.floor(diffTime / (1000 * 3600 * 24)) + 1
@@ -40,10 +42,28 @@ const PassageReservation = () => {
             setMontantParJours(montant)
             
             const optionsTotal = options.reduce((acc, cur) => acc + cur.tarifOption, 0)
-            setPrixTotal(optionsTotal + montant)
+            setMontantTotal(optionsTotal + montant)
 
             setBtnState(jours < 3)
         }
+    }
+
+    const handleReservationPayment = async () => {
+        const VOL = options.map(op => JSON.stringify(op)).join(", ")
+        const VUT = JSON.stringify({
+            VUTId: data?.tarif[0]._id,
+            nbrVUT: nbrJours,
+            prix: montantParJours
+        })
+        const rep = await axios.post('http://localhost:5000/api/reservations', {
+            item_name: `Location ${data?.modele.nom}`,
+            dateDebut: dates[0],
+            dateFin: dates[1],
+            montantTotal,
+            VUT,
+            VOL,
+            command_name: reservationDescription(options, data)
+        },{headers: {Authorization: token}})
     }
 
     if(isLoading) {
@@ -94,7 +114,7 @@ const PassageReservation = () => {
                             <div>
                                 <h3>Les options de location sélectionnées :</h3>
                                 <ul className="mt-3">
-                                    {options.map(op => (
+                                    {options.map((op) => (
                                         <li key={op.optionId} className="flex justify-between">
                                             <span className="block">{op.optionNom} :</span>
                                             <span className="block font-semibold">{op.tarifOption} XOF</span>
@@ -110,10 +130,10 @@ const PassageReservation = () => {
                         <div className="border-t border-gray-300 my-4"></div>
                         <div className="mt-4 flex justify-between">
                             <span className="block">Montant total :</span>
-                            <span className="block font-semibold">{prixTotal} XOF</span>
+                            <span className="block font-semibold">{montantTotal} XOF</span>
                         </div>
                         <div className="mt-10 flex justify-center">
-                            <button className="btn btn-wide bg-sky-700 text-white" disabled={btnState}>Valider</button>
+                            <button className="btn btn-wide bg-sky-700 text-white" onClick={handleReservationPayment} disabled={btnState}>Valider</button>
                         </div>
                     </div>
                 </div>

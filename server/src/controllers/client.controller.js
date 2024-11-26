@@ -1,7 +1,8 @@
 const Client = require('../models/Client.model')
-const bcrycpt = require('bcrypt')
+const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const fs = require('fs')
+const { sendConfirmationEmail, transporter } = require('../services')
 
 /**
  * Inscription d'un nouveau client.
@@ -14,8 +15,8 @@ const signUp = async (req, res) => {
     const {nom, prenom, email, password, tel, numeroPermis, expirationPermis} = req.body
     const {photoPermis, photoCNI} = req.files
     try {
-        const tour = await bcrycpt.genSalt(10)
-        const hashedPassword = await bcrycpt.hash(password, tour)
+        const tour = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(password, tour)
         const rep = await Client.create({
             nom,
             prenom,
@@ -72,7 +73,7 @@ const signIn = async (req, res) => {
             if(!client.etat) {
                 return res.status(403).json({message: 'Votre compte a été suspendu !'})
             } else {
-                const verifiedPassword = await bcrycpt.compare(password, client.password)
+                const verifiedPassword = await bcrypt.compare(password, client.password)
                 if(!verifiedPassword) {
                     return res.status(401).json({message: 'Email ou mot de passe incorrect !'})
                 } else {
@@ -137,12 +138,12 @@ const changePassword = async (req, res) => {
     const {oldPassword, newPassword} = req.body
     try {
         const client = await Client.findById(clientId)
-        const veriviedPassword = await bcrycpt.compare(oldPassword, client.password)
+        const veriviedPassword = await bcrypt.compare(oldPassword, client.password)
         if(!veriviedPassword){
             return res.status(404).json({message: "L'ancien mot de passe que vous avez saisi est incorrect !"})
         } else {
-            const tour = await bcrycpt.genSalt(10)
-            const hashedPassword = await bcrycpt.hash(newPassword, tour)
+            const tour = await bcrypt.genSalt(10)
+            const hashedPassword = await bcrypt.hash(newPassword, tour)
             client.password = hashedPassword
 
             const rep = await client.save()
@@ -156,12 +157,68 @@ const changePassword = async (req, res) => {
     }
 }
 
+const requestPasswordRecovery = async (req, res) => {
+    const {email} = req.body
+    try {
+        const client = await Client.findOne({email})
+        if(!client) {
+            return res.status(401).json({message: 'Email incorrect'})
+        } else {
 
+            const secret = fs.readFileSync('./.meow/meowPr.pem')
+            const token = jwt.sign({email}, secret, {expiresIn: '1h', algorithm: "RS256"})
+            const confirmationLink = `http://localhost:5173/récupération-password?token=${token}`;
+            await sendConfirmationEmail(
+                email,
+                client.prenom,
+                confirmationLink,
+                "password-recovery-confirmation.html",
+                transporter
+            )
+
+            return res.status(200).json({message: 'Veuillez vérifier votre boîte mail.'});
+        }
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Une erreur est survenue, veuillez réessayer.',
+            erreur: error.message,
+        });
+    }
+}
+
+const confirmPasswordRecovery = async (req, res) => {
+    const {token} = req.query 
+    const {newPassword} = req.body
+
+    if(!token || !newPassword) {
+        return res.status(400).json({message: 'Token ou mot de passe manquant'})
+    }
+    try {
+        const secret = fs.readFileSync('./.meow/meowPu.pem')
+        const decode = jwt.verify(token, secret)
+        const {email} = decode
+
+        const salt = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(newPassword, salt)
+
+        const rep = await Client.updateOne({email}, {$set: {password: hashedPassword}})
+
+       return res.status(200).json({message: 'Mot de passe modifié avec succès'})
+
+    } catch (error) {
+        return res.status(400).json({
+            message: 'Le lien de confirmation est invalide ou a expiré.',
+            erreur: error.message,
+        });
+    }
+}
 
 module.exports = {
     signUp,
     getClients,
     signIn,
     updateAcountDetails,
-    changePassword
+    changePassword,
+    requestPasswordRecovery,
+    confirmPasswordRecovery
 }

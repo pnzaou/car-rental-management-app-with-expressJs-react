@@ -31,6 +31,8 @@ import GestionOptionLocation from "./pages/dashboards/members-dashbord/Gestion-o
 import ListeVehicules from "./pages/dashboards/members-dashbord/Liste-vehicules";
 import DetailsVoiture from "./pages/Details-voiture";
 import PassageReservation from "./pages/Passage-reservation";
+import EmailForForgottenPassword from "./pages/auth/Email-for-forgotten-password";
+import RecuperattionPassword from "./pages/auth/Recuperattion-password";
 
 const queryClient = new QueryClient()
 
@@ -57,6 +59,14 @@ const router = createBrowserRouter([
   },
   {
     path: "/inscription"
+  },
+  {
+    path: "/email-for-forgotten-password",
+    element: <EmailForForgottenPassword/>
+  },
+  {
+    path: "/récupération-password",
+    element: <RecuperattionPassword/>
   },
   {
     path: "/members-dashboard",

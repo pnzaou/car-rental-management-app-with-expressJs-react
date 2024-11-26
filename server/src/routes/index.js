@@ -9,13 +9,14 @@ const { addCategorie, updateCategorie, getCategories, deleteCategorie, getCatego
 const { addMarque, getMarques, deleteMarque, updateMarque, getMarqueById, getMarquesWithTheirModeles } = require('../controllers/marque.controller')
 const { addModele, getModeles, updateModele, deleteModele } = require('../controllers/modele.controller')
 const { addVoiture, getVoitues, updateVoiture, deleteVoiture, getVoituresDetailsForClient } = require('../controllers/voiture.controller')
-const { signUp, signIn, getClients, updateAcountDetails, changePassword } = require('../controllers/client.controller')
+const { signUp, signIn, getClients, updateAcountDetails, changePassword, requestPasswordRecovery, confirmPasswordRecovery } = require('../controllers/client.controller')
 const { addOption, getOptions, updateOption, deleteOption } = require('../controllers/optionDeLocation.controller')
 const { addUnite, getUnites, updateUnite, deleteUnite } = require('../controllers/uniteTarification.controller')
 const { addMaintenance, getMaintenances, updateMaintenance, deleteMaintenance } = require('../controllers/maintenance.controller')
 const { addCharge, getCharges, updateCharge, deleteCharge } = require('../controllers/charge.controller')
 const { sendNotification, getNotifications } = require('../controllers/notification.controller')
 const { addFavori, getFavoris, deleteFavori } = require('../controllers/favori.controller')
+const { createReservation } = require('../controllers/reservation.controller')
 
 //Routes liées aux DROITS
 router.route('/api/droits')
@@ -104,8 +105,10 @@ router.route('/api/clients')
     .post(uploadMultipleClient, signUp)
     .get(getClients)
 router.post('/api/client/signin', signIn)
-router.post('/api/client/updateAcount', verifyToken, updateAcountDetails)
+router.put('/api/client/updateAcount', verifyToken, updateAcountDetails)
 router.patch('/api/client/changePassword', verifyToken, changePassword)
+router.post('/api/client/request-password-recovery', requestPasswordRecovery)
+router.patch('/api/client/confirm-password-recovery', confirmPasswordRecovery)
 
 
 //Routes liées aux OPTIONS
@@ -154,6 +157,9 @@ router.get('/api/favoris', verifyToken, getFavoris)
 router.route('/api/favori/:id')
     .post(verifyToken, addFavori)  
     .delete(verifyToken, deleteFavori)
+
+//Routes liées aux RESERVATIONS
+router.post('/api/reservations', verifyToken, createReservation)
 
 
 module.exports = router

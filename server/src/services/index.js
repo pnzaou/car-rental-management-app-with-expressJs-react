@@ -22,15 +22,31 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-
-const getEmailTemplate = (filename) => {
+const sendConfirmationEmail = async (userEmail, userName, confirmationLink, filename, transporter) => {
   const emailTemplatePath = path.join('src', 'mails', filename)
-  return fs.readFileSync(emailTemplatePath, 'utf8')
-}
+  const emailTemplate = fs.readFileSync(emailTemplatePath, 'utf8')
 
+  const emailContent = emailTemplate
+      .replace('{{username}}', userName)
+      .replace('{{confirmationLink}}', confirmationLink)
+
+  let mailOptions = {
+      from: 'perrinemmanuelnzaou@gmail.com',
+      to: userEmail,
+      subject: 'Confirmation de modification de mot de passe',
+      html: emailContent
+  }
+
+  try {
+      await transporter.sendMail(mailOptions)
+      console.log('Email envoyé avec succès.')
+  } catch (error) {
+      console.error('Erreur lors de l\'envoi de l\'email:', error)
+  }
+}
 
 module.exports = {
     deleteLogo,
     transporter,
-    getEmailTemplate
+    sendConfirmationEmail
 }

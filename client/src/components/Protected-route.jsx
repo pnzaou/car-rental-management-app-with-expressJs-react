@@ -9,6 +9,7 @@ export default function ProtectedRoute({children, redirectTo}) {
     const location = useLocation()
 
     if(!token) {
+      localStorage.setItem('logout', "n")
       localStorage.setItem('previousURL', location.pathname + location.search + location.hash)
       return <Navigate to={redirectTo}/>
     }
@@ -18,6 +19,7 @@ export default function ProtectedRoute({children, redirectTo}) {
       const currentTime = Math.floor(Date.now() / 1000)
 
       if(exp < currentTime) {
+        localStorage.setItem('logout', "n")
         localStorage.setItem('previousURL', location.pathname + location.search + location.hash)
         localStorage.setItem("theme", "light")
         return <Navigate to={redirectTo}/>
