@@ -23,7 +23,7 @@ const EmailForForgottenPassword = () => {
                 <div
                 className="hidden md:block lg:w-1/2 bg-cover bg-blue-700"
                 style={{
-                    backgroundImage: `url("/login.svg")`,
+                    backgroundImage: `url("/img/Mail_Icon.gif")`,
                 }}
                 ></div>
                 <div className="w-full p-8 lg:w-1/2">
@@ -52,7 +52,7 @@ const EmailForForgottenPassword = () => {
                     </span>}
                     </div>
                     <div className="mt-8">
-                    <button className="bg-blue-700 text-white font-bold py-2 px-4 w-full rounded hover:bg-blue-600">
+                    <button className="bg-[#006A61] text-white font-bold py-2 px-4 w-full rounded hover:bg-[#34514e]">
                         Soumettre
                     </button>
                     </div>

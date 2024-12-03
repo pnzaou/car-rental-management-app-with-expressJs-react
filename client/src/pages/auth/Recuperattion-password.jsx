@@ -28,7 +28,9 @@ const RecuperattionPassword = () => {
                 <div
                 className="hidden md:block lg:w-1/2 bg-cover bg-blue-700"
                 style={{
-                    backgroundImage: `url("/login.svg")`,
+                    backgroundImage: `url("/img/Générateur_mot_de_passe_mémorisable.jpeg")`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center"
                 }}
                 ></div>
                 <div className="w-full p-8 lg:w-1/2">
@@ -81,7 +83,7 @@ const RecuperattionPassword = () => {
                         )}
                     </div>
                     <div className="mt-8">
-                    <button className="bg-blue-700 text-white font-bold py-2 px-4 w-full rounded hover:bg-blue-600">
+                    <button className="bg-[#022374] text-white font-bold py-2 px-4 w-full rounded hover:bg-[#010A47]">
                         Confirmer
                     </button>
                     </div>

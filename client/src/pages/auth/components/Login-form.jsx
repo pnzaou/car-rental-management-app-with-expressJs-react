@@ -52,7 +52,7 @@ const LoginForm = ({url}) => {
         <div
           className="hidden md:block lg:w-1/2 bg-cover bg-blue-700"
           style={{
-            backgroundImage: `url("/login.svg")`,
+            backgroundImage: `url("/img/login.svg")`,
           }}
         ></div>
         <div className="w-full p-8 lg:w-1/2">
