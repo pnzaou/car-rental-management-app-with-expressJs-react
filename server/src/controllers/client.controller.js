@@ -31,7 +31,7 @@ const signUp = async (req, res) => {
         const msg = "Votre compte a été créé avec succès"
         return res.status(201).json({message: msg, data: rep})
     } catch (error) {
-        const msg = "Erreur lors de la création de votre compte"
+        const msg = "Une erreur est survenue. Veuillez réessayer"
         return res.status(500).json({message: msg, erreur: error.message})
     }
 }

@@ -33,6 +33,7 @@ import DetailsVoiture from "./pages/Details-voiture";
 import PassageReservation from "./pages/Passage-reservation";
 import EmailForForgottenPassword from "./pages/auth/Email-for-forgotten-password";
 import RecuperattionPassword from "./pages/auth/Recuperattion-password";
+import ClientSignup from "./pages/auth/Client-signup";
 
 const queryClient = new QueryClient()
 
@@ -58,7 +59,8 @@ const router = createBrowserRouter([
     element: <TokenContextProvider><ClientLogin/></TokenContextProvider>
   },
   {
-    path: "/inscription"
+    path: "/inscription",
+    element: <ClientSignup/>
   },
   {
     path: "/email-for-forgotten-password",

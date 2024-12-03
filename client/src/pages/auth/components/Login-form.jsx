@@ -71,7 +71,7 @@ const LoginForm = ({url}) => {
                   required: true,
                   pattern: emailRegex
                 })}
-                type="text"
+                type="email"
                 required
               />
               {errors.email && <span className="
@@ -120,7 +120,7 @@ const LoginForm = ({url}) => {
               verif.includes("authentification")? (
                 <div className="mt-4 flex items-center w-full text-center">
                   <Link
-                    to="#"
+                    to="/inscription"
                     className="text-xs text-gray-500 capitalize text-center w-full"
                   >
                     Vous n&apos;avez pas de compte?
