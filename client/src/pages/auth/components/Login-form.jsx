@@ -8,7 +8,7 @@ import TokenContext from '../../../contexts/token.context'
 
 const LoginForm = ({url}) => {
   const { login } = useContext(TokenContext)
-  const {register, handleSubmit, formState: {errors}} = useForm()
+  const {register, handleSubmit, formState: {errors}, setValue} = useForm()
   const navigate = useNavigate()
   const verif = url
   const mdpRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/
@@ -41,7 +41,8 @@ const LoginForm = ({url}) => {
         : navigate("/members-dashboard")
       }
     } catch (error) {
-      console.log(error)
+      setValue("email", "")
+      setValue("password", "")
       toast.error(error.response.data.message)
     }
   }

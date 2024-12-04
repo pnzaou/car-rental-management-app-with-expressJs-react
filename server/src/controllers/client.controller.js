@@ -28,9 +28,20 @@ const signUp = async (req, res) => {
             photoPermis: `${req.protocol}://${req.get('host')}/uploads/${photoPermis[0].filename}`,
             photoCNI: `${req.protocol}://${req.get('host')}/uploads/${photoCNI[0].filename}`
         })
-        const msg = "Votre compte a été créé avec succès"
+        const secret = fs.readFileSync('./.meow/meowPr.pem')
+        const token = jwt.sign({email: rep.email}, secret, {algorithm: "RS256"})
+        const confirmationLink = `http://localhost:5173/email-address-confirmation?token=${token}`;
+        await sendConfirmationEmail(
+            rep.email,
+            rep.prenom,
+            confirmationLink,
+            "first-login-email-verification.html",
+            transporter
+        )
+        const msg = "Votre compte a été créé avec succès. Veuillez valider votre email via le mail qui vous a été envoyé."
         return res.status(201).json({message: msg, data: rep})
     } catch (error) {
+        console.log(error.message);
         const msg = "Une erreur est survenue. Veuillez réessayer"
         return res.status(500).json({message: msg, erreur: error.message})
     }
@@ -64,38 +75,50 @@ const getClients = async (req, res) => {
  */
 const signIn = async (req, res) => {
     const {email, password} = req.body
-
+    const client = req.ClientData
     try {
-        const client = await Client.findOne({email: email})
-        if(!client) {
-            return res.status(401).json({message: 'Email ou mot de passe incorrect !'})
+        if(!client.etat) {
+            return res.status(403).json({message: 'Votre compte a été suspendu !'})
         } else {
-            if(!client.etat) {
-                return res.status(403).json({message: 'Votre compte a été suspendu !'})
+            const verifiedPassword = await bcrypt.compare(password, client.password)
+            if(!verifiedPassword) {
+                return res.status(401).json({message: 'Email ou mot de passe incorrect !'})
             } else {
-                const verifiedPassword = await bcrypt.compare(password, client.password)
-                if(!verifiedPassword) {
-                    return res.status(401).json({message: 'Email ou mot de passe incorrect !'})
-                } else {
-                    const secret = fs.readFileSync('./.meow/meowPr.pem')
-                    const token = jwt.sign(
-                        {
-                            clientId: client._id,
-                            clientEmail: client.email,
-                            clientNom: client.nom,
-                            clientPrenom: client.prenom,
-                            clientProfil: client.profil
-                        }, 
-                        secret, {expiresIn: '1h', algorithm: "RS256"}
-                    )
-                    const msg = 'Connexion réussie'
-                    return res.status(200).json({message: msg, token: token})
-                }
+                const secret = fs.readFileSync('./.meow/meowPr.pem')
+                const token = jwt.sign(
+                    {
+                        clientId: client._id,
+                        clientEmail: client.email,
+                        clientNom: client.nom,
+                        clientPrenom: client.prenom,
+                        clientProfil: client.profil
+                    }, 
+                    secret, {expiresIn: '1h', algorithm: "RS256"}
+                )
+                const msg = 'Connexion réussie'
+                return res.status(200).json({message: msg, token: token})
             }
         }
     } catch (error) {
         const msg = 'Erreur lors de la connexion'
         return res.status(500).json({message: msg, erreur: error})
+    }
+}
+
+const validationEmail = async (req, res) => {
+    const {token} = req.query
+
+    try {
+        const secret = fs.readFileSync('./.meow/meowPu.pem')
+        const decode = jwt.verify(token, secret)
+        const {email} = decode 
+        
+        await Client.findOneAndUpdate({email}, {$set: {emailVerif: true}})
+
+        res.status(200).json({message: 'Votre ddresse mail a été confirmée avec succès'})
+
+    } catch (error) {
+        res.status(400).json({message: 'Le lien de confirmation est invalide ou a expiré', erreur: error})
     }
 }
 
@@ -220,5 +243,6 @@ module.exports = {
     updateAcountDetails,
     changePassword,
     requestPasswordRecovery,
-    confirmPasswordRecovery
+    confirmPasswordRecovery,
+    validationEmail
 }

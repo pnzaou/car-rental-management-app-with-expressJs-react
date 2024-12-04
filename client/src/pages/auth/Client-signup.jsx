@@ -24,10 +24,10 @@ const ClientSignup = () => {
         formData.append("email", data.email)
         formData.append("prenom", data.prenom)
         formData.append("password", data.password)
-        formData.append("numeroPermis", data.numeroPermis)
-        formData.append("expirationPermis", data.expirationPermis)
         formData.append("photoCNI", data.photoCNI[0])
+        formData.append("numeroPermis", data.numeroPermis)
         formData.append("photoPermis", data.photoPermis[0])
+        formData.append("expirationPermis", data.expirationPermis)
         const rep = await axios.post("http://localhost:5000/api/clients", formData, {
           headers: {
               'Content-Type': 'multipart/form-data'

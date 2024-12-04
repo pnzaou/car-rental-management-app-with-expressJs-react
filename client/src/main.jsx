@@ -34,6 +34,7 @@ import PassageReservation from "./pages/Passage-reservation";
 import EmailForForgottenPassword from "./pages/auth/Email-for-forgotten-password";
 import RecuperattionPassword from "./pages/auth/Recuperattion-password";
 import ClientSignup from "./pages/auth/Client-signup";
+import ClientEmailAddressConfirmation from "./pages/auth/Client-email-address-confirmation";
 
 const queryClient = new QueryClient()
 
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
   {
     path: "/inscription",
     element: <ClientSignup/>
+  },
+  {
+    path: "/email-address-confirmation",
+    element: <ClientEmailAddressConfirmation/>
   },
   {
     path: "/email-for-forgotten-password",
