@@ -66,6 +66,18 @@ const getClients = async (req, res) => {
     }
 }
 
+const getClientDetails = async (req, res) => {
+    const {id} = req.params
+    try {
+        const rep = await Client.findById(id)
+        const msg = "Détails du client récupérés avec succès."
+        return res.status(200).json({message: msg, data: rep})
+    } catch (error) {
+        const msg = "Erreur lors de la récuperation des données"
+        return res.status(500).json({message: msg, erreur: error})
+    }
+}
+
 /**
  * Connexion d'un client existant.
  * @async
@@ -236,13 +248,30 @@ const confirmPasswordRecovery = async (req, res) => {
     }
 }
 
+const toggleClientState = async (req, res) => {
+    const { id } = req.params
+    try {
+        const client = await Client.findById(id)
+        client.etat = !client.etat
+
+        const rep = await client.save()
+        const msg = `Client ${ rep.etat ? 'débloqué' : 'bloqué'} avec succès`
+        return res.status(200).json({message: msg, data: rep})
+    } catch (error) {
+        const msg = 'Une erreur est survenue ! Veuillez réessayer.'
+        return res.status(500).json({message: msg, erreur: error})
+    }
+}
+
 module.exports = {
     signUp,
     getClients,
+    getClientDetails,
     signIn,
     updateAcountDetails,
     changePassword,
     requestPasswordRecovery,
     confirmPasswordRecovery,
-    validationEmail
+    validationEmail,
+    toggleClientState
 }

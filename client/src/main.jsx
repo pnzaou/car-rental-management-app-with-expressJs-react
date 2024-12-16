@@ -35,6 +35,8 @@ import EmailForForgottenPassword from "./pages/auth/Email-for-forgotten-password
 import RecuperattionPassword from "./pages/auth/Recuperattion-password";
 import ClientSignup from "./pages/auth/Client-signup";
 import ClientEmailAddressConfirmation from "./pages/auth/Client-email-address-confirmation";
+import ListeClient from "./pages/dashboards/members-dashbord/Liste-client";
+import ClientDetails from "./pages/dashboards/members-dashbord/Client-details";
 
 const queryClient = new QueryClient()
 
@@ -122,6 +124,18 @@ const router = createBrowserRouter([
       {
         path: "vehicules/ajout",
         element: <AjoutVehicule/>
+      },
+      {
+        path: "clients",
+        element: <ListeClient/>
+      },
+      {
+        path: "clients/ajout",
+        element: <AjoutVehicule/>
+      },
+      {
+        path: "clients/détails/:id",
+        element: <ClientDetails/>
       }
     ]
   },

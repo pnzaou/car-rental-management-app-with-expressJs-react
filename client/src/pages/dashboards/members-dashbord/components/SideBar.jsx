@@ -63,6 +63,30 @@ const SideBar = ({ isOpen }) => {
               </ul>
             </li>
             <hr className="my-2 border-gray-500" />
+            <li className="dropdown dropdown-hover relative">
+              <label tabIndex={0} className="">Gesttion des clients</label>
+              <ul
+                tabIndex={0}
+                className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow mt-2 ml-20"
+              >
+                <li><Link to="/members-dashboard/clients/ajout">Ajouter un client</Link></li>
+                <hr className="my-2 border-gray-500" />
+                <li><Link to="/members-dashboard/clients">Lister les clients</Link></li>
+              </ul>
+            </li>
+            <hr className="my-2 border-gray-500" />
+            <li className="dropdown dropdown-hover relative">
+              <label tabIndex={0} className="">Gesttion des réservations</label>
+              <ul
+                tabIndex={0}
+                className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow mt-2 ml-20"
+              >
+                <li><Link to="/members-dashboard/categories/ajout">Créer une réservations</Link></li>
+                <hr className="my-2 border-gray-500" />
+                <li><Link to="/members-dashboard/categories">Lister les réservations</Link></li>
+              </ul>
+            </li>
+            <hr className="my-2 border-gray-500" />
           </ul>
         </div>
       </div>

@@ -11,7 +11,7 @@ const DetailsMarques = () => {
     const {id} = useParams()
     const {token} = useContext(TokenContext)
 
-    const {data, isLoading, isError, isFetched} = useQuery("marqueData", async () => {
+    const {data, isLoading, error, isFetched, refetch} = useQuery("marqueData", async () => {
         const rep = await axios.get(`http://localhost:5000/api/marque/${id}`,{
             headers: {
                 Authorization: token
@@ -37,10 +37,13 @@ const DetailsMarques = () => {
         )
     }
 
-    if(isError) {
+    if(error) {
         return (
-            <div className="text-center text-red-500">
+            <div className="flex flex-col justify-center items-center min-h-screen text-center text-red-500">
                 <h1>Erreur lors du chargement des données</h1>
+                <button onClick={refetch} className="btn btn-primary mt-4">
+                    Réessayer
+                </button>
             </div>
         )
     }
