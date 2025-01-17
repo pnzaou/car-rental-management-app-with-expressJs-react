@@ -5,6 +5,7 @@ const Reservation = require('../models/Reservation.model')
 const RVUT = require('../models/ReservationVoitureUniteTarification.model')
 const RVOL = require('../models/ReservationVoitureOptionDeLocation.model')
 const payementRequestUrl = "https://paytech.sn/api/payment/request-payment"
+
 const headers = {
     Accept: "application/json",
     'Content-Type': "application/json",
@@ -17,31 +18,31 @@ const createReservation = async (req, res) => {
     const {clientId, clientNom, clientPrenom} = req.authData
     const {item_name, dateDebut, dateFin, montantTotal, VUT, VOL, command_name} = req.body
 
-    const session = await mongoose.startSession()
-    session.startTransaction()
+    // const session = await mongoose.startSession()
+    // session.startTransaction()
 
     try {
-        const repRes = await Reservation.create([{
-            clientId, dateDebut, dateFin, montantTotal
-        }], { session })
+        // const repRes = await Reservation.create([{
+        //     clientId, dateDebut, dateFin, montantTotal
+        // }], { session })
 
-        const vutjson = JSON.parse(VUT)
-        await RVUT.create([{
-            nbrVoitureUniteTarification: vutjson.nbrVUT,
-            prix: vutjson.prix,
-            reservationId: repRes[0]._id,
-            voitureUniteTarificationId: vutjson.VUTId
-        }], { session })
+        // const vutjson = JSON.parse(VUT)
+        // await RVUT.create([{
+        //     nbrVoitureUniteTarification: vutjson.nbrVUT,
+        //     prix: vutjson.prix,
+        //     reservationId: repRes[0]._id,
+        //     voitureUniteTarificationId: vutjson.VUTId
+        // }], { session })
 
-        const voltab = VOL.split(", ").map(vol => JSON.parse(vol))
-        await Promise.all(voltab.map(vol => {
-            return RVOL.create([{
-                nbrVoitureOptionLocation: 1,
-                prix: vol.tarifOption,
-                reservationId: repRes._id,
-                voitureOptionLocationId: vol.volId
-            }], { session })
-        }))
+        // const voltab = VOL.split(", ").map(vol => JSON.parse(vol))
+        // await Promise.all(voltab.map(vol => {
+        //     return RVOL.create([{
+        //         nbrVoitureOptionLocation: 1,
+        //         prix: vol.tarifOption,
+        //         reservationId: repRes._id,
+        //         voitureOptionLocationId: vol.volId
+        //     }], { session })
+        // }))
 
         const repPay = await fetch(payementRequestUrl, {
             method: 'post',
@@ -61,8 +62,8 @@ const createReservation = async (req, res) => {
 
         const jsonRep = await repPay.json()
 
-        await session.commitTransaction()
-        session.endSession()
+        // await session.commitTransaction()
+        // session.endSession()
 
         if(jsonRep.success === 1) {
             return res.status(200).json({
@@ -85,6 +86,8 @@ const createReservation = async (req, res) => {
         res.status(500).json({success: false, message: 'Une erreur est survenue veuillez réessayer.', error })
     }
 }
+
+
 
 module.exports = {
     createReservation

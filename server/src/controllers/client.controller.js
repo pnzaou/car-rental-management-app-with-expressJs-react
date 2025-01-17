@@ -15,8 +15,23 @@ const signUp = async (req, res) => {
     const {nom, prenom, email, password, tel, numeroPermis, expirationPermis} = req.body
     const {photoPermis, photoCNI} = req.files
     try {
-        const tour = await bcrypt.genSalt(10)
-        const hashedPassword = await bcrypt.hash(password, tour)
+
+        if(!nom || !prenom || !email || !password || !tel || !numeroPermis || !expirationPermis || !photoPermis || !photoCNI) {
+            return res.status(400).json({
+                message: "Tous les champs sont obligatoires."
+            })
+        }
+
+        const client = await Client.findOne({ email })
+
+        if(client) {
+            return res.status(400).json({
+                message: "Cet email est déjà utilisé."
+            })
+        }
+
+        const salt = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(password, salt)
         const rep = await Client.create({
             nom,
             prenom,
@@ -38,12 +53,17 @@ const signUp = async (req, res) => {
             "first-login-email-verification.html",
             transporter
         )
-        const msg = "Votre compte a été créé avec succès. Veuillez valider votre email via le mail qui vous a été envoyé."
-        return res.status(201).json({message: msg, data: rep})
+
+        return res.status(201).json({
+            message: "Votre compte a été créé avec succès. Veuillez valider votre email via le mail qui vous a été envoyé.", 
+            data: rep
+        })
     } catch (error) {
-        console.log(error.message);
-        const msg = "Une erreur est survenue. Veuillez réessayer"
-        return res.status(500).json({message: msg, erreur: error.message})
+        console.log("Erreur dans client.controller (signUp)", error)
+        return res.status(500).json({
+            message: "Une erreur est survenue. Veuillez réessayer", 
+            erreur: error
+        })
     }
 }
 
@@ -56,25 +76,47 @@ const signUp = async (req, res) => {
  */
 const getClients = async (req, res) => {
     try {
-        const rep = await Client.find()
-        const msg = "Clients récupérés avec succès"
+        const rep = await Client.find({}, {password: 0})
 
-        return res.status(200).json({message: msg, data: rep})
+        return res.status(200).json({
+            message: "Clients récupérés avec succès", 
+            data: rep
+        })
     } catch (error) {
-        const msg = "Erreur lors de la récupération"
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans client.controller (getClients)", error)
+        return res.status(500).json({
+            message: "Erreur lors de la récupération", 
+            erreur: error
+        })
     }
 }
 
 const getClientDetails = async (req, res) => {
     const {id} = req.params
     try {
+        if(!id) {
+            return res.status(400).json({
+                message: "Aucun utilisateur sélectioné."
+            })
+        }
         const rep = await Client.findById(id)
-        const msg = "Détails du client récupérés avec succès."
-        return res.status(200).json({message: msg, data: rep})
+
+        if(!rep) {
+            return res.status(400).json({
+                message: "Aucun utilisateur trouvé."
+            })
+        }
+
+        return res.status(200).json({
+            message: "Détails du client récupérés avec succès.", 
+            data: rep
+        })
     } catch (error) {
-        const msg = "Erreur lors de la récuperation des données"
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans client.controller (getClientDetails)", error)
+        return res.status(500).json({
+            message: "Erreur lors de la récuperation des données", 
+            erreur: error
+        })
     }
 }
 
@@ -89,6 +131,11 @@ const signIn = async (req, res) => {
     const {email, password} = req.body
     const client = req.ClientData
     try {
+        if(!email || !password) {
+            return res.status(400).json({
+                message: "Tous les champs sont obligatoires."
+            })
+        }
         if(!client.etat) {
             return res.status(403).json({message: 'Votre compte a été suspendu !'})
         } else {
@@ -107,13 +154,20 @@ const signIn = async (req, res) => {
                     }, 
                     secret, {expiresIn: '1h', algorithm: "RS256"}
                 )
-                const msg = 'Connexion réussie'
-                return res.status(200).json({message: msg, token: token})
+
+                return res.status(200).json({
+                    message: "Connexion réussie", 
+                    token: token
+                })
             }
         }
     } catch (error) {
-        const msg = 'Erreur lors de la connexion'
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans client.controller (signIn)", error)
+
+        return res.status(500).json({
+            message: "Erreur lors de la connexion", 
+            erreur: error
+        })
     }
 }
 
@@ -127,10 +181,14 @@ const validationEmail = async (req, res) => {
         
         await Client.findOneAndUpdate({email}, {$set: {emailVerif: true}})
 
-        res.status(200).json({message: 'Votre ddresse mail a été confirmée avec succès'})
+        res.status(200).json({message: 'Votre adresse mail a été confirmée avec succès'})
 
     } catch (error) {
-        res.status(400).json({message: 'Le lien de confirmation est invalide ou a expiré', erreur: error})
+        console.log("Erreur dans client.controller (validationEmail)", error)
+        res.status(400).json({
+            message: 'Le lien de confirmation est invalide ou a expiré', 
+            erreur: error
+        })
     }
 }
 
@@ -153,11 +211,17 @@ const updateAcountDetails = async (req, res) => {
             numeroPermis,
             expirationPermis
         }, {new: true})
-        const msg = "Votre compte a été mis à jour avec succès."
-        return res.status(200).json({message: msg, data: rep})
+
+        return res.status(200).json({
+            message: "Votre compte a été mis à jour avec succès.",
+            data: rep
+        })
     } catch (error) {
-        const msg = "Erreur lors de la mise à jour"
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans client.controller (updateAcountDetails)", error)
+        return res.status(500).json({
+            message: "Erreur lors de la mise à jour",
+            erreur: error
+        })
     }
 }
 
@@ -172,29 +236,44 @@ const changePassword = async (req, res) => {
     const {clientId} = req.authData
     const {oldPassword, newPassword} = req.body
     try {
+        if(!oldPassword || !newPassword) {
+            return res.status(400).json({
+                message: "Veuillez renseigner l'ancien et le nouveau mot de passe"
+            })
+        }
         const client = await Client.findById(clientId)
         const veriviedPassword = await bcrypt.compare(oldPassword, client.password)
         if(!veriviedPassword){
-            return res.status(404).json({message: "L'ancien mot de passe que vous avez saisi est incorrect !"})
+            return res.status(401).json({message: "L'ancien mot de passe que vous avez saisi est incorrect !"})
         } else {
-            const tour = await bcrypt.genSalt(10)
-            const hashedPassword = await bcrypt.hash(newPassword, tour)
+            const salt = await bcrypt.genSalt(10)
+            const hashedPassword = await bcrypt.hash(newPassword, salt)
             client.password = hashedPassword
 
             const rep = await client.save()
-            const msg = "Votre mot de passe a été modifié avec succès"
 
-            return res.status(200).json({message: msg, data: rep})
+            return res.status(200).json({
+                message: "Votre mot de passe a été modifié avec succès",
+                data: rep
+            })
         }
     } catch (error) {
-        const msg = "Erreur lors de la modification du mot de passe"
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans client.controller (changePassword)", error)
+        return res.status(500).json({
+            message: "Erreur lors de la modification du mot de passe",
+            erreur: error
+        })
     }
 }
 
 const requestPasswordRecovery = async (req, res) => {
     const {email} = req.body
     try {
+        if(!email) {
+            return res.status(400).json({
+                message: "Veuillez fournir votre adresse mail."
+            })
+        }
         const client = await Client.findOne({email})
         if(!client) {
             return res.status(401).json({message: 'Email incorrect'})
@@ -214,6 +293,7 @@ const requestPasswordRecovery = async (req, res) => {
             return res.status(200).json({message: 'Veuillez vérifier votre boîte mail.'});
         }
     } catch (error) {
+        console.log("Erreur dans client.controller (requestPasswordRecovery)", error)
         return res.status(500).json({
             message: 'Une erreur est survenue, veuillez réessayer.',
             erreur: error.message,
@@ -236,11 +316,12 @@ const confirmPasswordRecovery = async (req, res) => {
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(newPassword, salt)
 
-        const rep = await Client.updateOne({email}, {$set: {password: hashedPassword}})
+        await Client.updateOne({email}, {$set: {password: hashedPassword}})
 
        return res.status(200).json({message: 'Mot de passe modifié avec succès'})
 
     } catch (error) {
+        console.log("Erreur dans client.controller (confirmPasswordRecovery)", error)
         return res.status(400).json({
             message: 'Le lien de confirmation est invalide ou a expiré.',
             erreur: error.message,
@@ -256,10 +337,17 @@ const toggleClientState = async (req, res) => {
 
         const rep = await client.save()
         const msg = `Client ${ rep.etat ? 'débloqué' : 'bloqué'} avec succès`
-        return res.status(200).json({message: msg, data: rep})
+
+        return res.status(200).json({
+            message: msg, 
+            data: rep
+        })
     } catch (error) {
-        const msg = 'Une erreur est survenue ! Veuillez réessayer.'
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans client.controller (toggleClientState)", error)
+        return res.status(500).json({
+            message: 'Une erreur est survenue ! Veuillez réessayer.', 
+            erreur: error
+        })
     }
 }
 

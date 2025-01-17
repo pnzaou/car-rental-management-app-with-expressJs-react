@@ -1,4 +1,5 @@
 const Favori = require('../models/Favori.model')
+const Voiture = require('../models/Voiture.model')
 
 /**
  * Ajoute une voiture aux favoris du client.
@@ -12,13 +13,24 @@ const addFavori = async (req, res) => {
     const {clientId} = req.authData
 
     try {
+        const voiture = Voiture.findById(id)
+        if(!voiture) {
+            return res.status(400).json({
+                message: "impossible d'ajouter cette voiture en favori"
+            })
+        }
         const rep = await Favori.create({clientId, voitureId: id})
-        const msg = "Voiture ajoutée aux favoris"
         
-        return res.status(201).json({message: msg, data: rep})
+        return res.status(201).json({
+            message: "Voiture ajoutée aux favoris", 
+            data: rep
+        })
     } catch (error) {
-        const msg = "Erreur lors de l'ajout"
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans favori.controller (addFavori)", error)
+        return res.status(500).json({
+            message: "Erreur lors de l'ajout", 
+            erreur: error
+        })
     }
 }
 
@@ -33,11 +45,17 @@ const getFavoris = async (req, res) => {
     const {clientId} = req.authData
     try {
         const rep = await Favori.find({clientId})
-        const msg = "Liste des favoris récupérée avec succès."
-        return res.status(200).json({message: msg, data: rep})
+
+        return res.status(200).json({
+            message: "Liste des favoris récupérée avec succès.", 
+            data: rep
+        })
     } catch (error) {
-        const msg = "Erreur lors de la récupération"
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans favori.controller (getFavoris)", error)
+        return res.status(500).json({
+            message: "Erreur lors de la récupération", 
+            erreur: error
+        })
     }
 }
 
@@ -53,11 +71,17 @@ const deleteFavori = async (req, res) => {
     const { id } = req.params
     try {
         const rep = await Favori.deleteOne({clientId, voitureId: id})
-        const msg = "La voiture a été supprimé de vos favoris."
-        return res.status(200).json({message: msg, data: rep})
+
+        return res.status(200).json({
+            message: "La voiture a été supprimé de vos favoris.", 
+            data: rep
+        })
     } catch (error) {
-        const msg = "Erreur lors de la suppression"
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans favori.controller (deleteFavori)", error)
+        return res.status(500).json({
+            message: "Erreur lors de la suppression", 
+            erreur: error
+        })
     }
 }
 

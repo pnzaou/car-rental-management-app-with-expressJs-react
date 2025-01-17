@@ -9,6 +9,7 @@ const voitureModel = new Schema({
     typeCarburant: {type: String, required: true},
     capaciteDassise: {type: Number, required: true},
     quantite: {type: Number, default: null},
+    prix: {type: Number, default: null},
     categorieId: {type: Schema.Types.ObjectId, ref: 'Categorie'},
     modeleId: {type: Schema.Types.ObjectId, ref: 'Modele'}
 }, {timestamps: true})

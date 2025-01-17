@@ -32,7 +32,8 @@ const addVoiture = async (req, res) => {
         typeBoite, 
         typeCarburant, 
         capaciteDassise,
-        quantite, 
+        quantite,
+        prix, 
         categorieId, 
         modeleId,
         selectedOptions,
@@ -43,6 +44,12 @@ const addVoiture = async (req, res) => {
 
     const images = req.files.map(image => `${req.protocol}://${req.get('host')}/uploads/${image.filename}`)
     try {
+        if(!req.files || !typeBoite || !typeCarburant || !capaciteDassise){
+            return res.status(400).json({
+                message: "Veuillez renseigner les champs obligatoires."
+            })
+        } 
+
         const voiture = await Voiture.create({
             immatriculation,
             images,
@@ -51,13 +58,13 @@ const addVoiture = async (req, res) => {
             typeCarburant,
             capaciteDassise,
             quantite,
+            prix,
             categorieId,
             modeleId
         })
 
         if(uniteTarificationId) {
-            rep = await VUT.create({uniteTarificationId, voitureId: voiture._id, tarifLocation})
-            console.log(rep)
+            await VUT.create({uniteTarificationId, voitureId: voiture._id, tarifLocation})
         }
 
         if(selectedOptions) {
@@ -69,15 +76,19 @@ const addVoiture = async (req, res) => {
                 })
             })
     
-            rep = await Promise.all(optionPromises)
-            console.log(rep)
+            await Promise.all(optionPromises)
         }
 
-        const msg = "Voiture enregistrée avec succès"
-        return res.status(201).json({message: msg, data: voiture})
+        return res.status(201).json({
+            message: "Voiture enregistrée avec succès", 
+            data: voiture
+        })
     } catch (error) {
-        const msg ="Erreur lors de l'enregistrement"
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans user.controller (addVoiture)", error)
+        return res.status(500).json({
+            message: "Erreur lors de l'enregistrement", 
+            erreur: error
+        })
     }   
 }
 
@@ -99,6 +110,7 @@ const getVoitues = async (req, res) => {
         const msg = 'Voitures récupérés avec succès'
         return res.status(200).json({message: msg, data: voitureWithModeleAndLocPrice})
     } catch (error) {
+        console.log("Erreur dans user.controller (getAuthUserDetails)", error)
         const msg = 'Erreur lors de la récupération des données'
         return res.status(500).json({message: msg, erreur: error})
     }
@@ -166,7 +178,7 @@ const updateVoiture = async (req, res) => {
         return res.status(200).json({message: msg, data: rep})
 
     } catch (error) {
-
+        console.log("Erreur dans user.controller (getAuthUserDetails)", error)
         const msg = "Erreur lors de la modification"
         return res.status(500).json({message: msg, erreur: error})
 
@@ -189,8 +201,43 @@ const deleteVoiture = async (req, res) => {
         return res.status(200).json({message: msg, data: rep})
         
     } catch (error) {
+        console.log("Erreur dans user.controller (getAuthUserDetails)", error)
         const msg = 'Erreur lors de la supprission'
         return res.status(500).json({message: msg, erreur: error}) 
+    }
+}
+
+const getRentVoitues = async (req, res) => {
+    try {
+        const rep = await Voiture.find({ quantite: { $eq: null }, prix: { $eq: null } }).lean()
+        const voitureWithModeleAndLocPrice = await Promise.all(rep.map(async (voiture) => {
+            const {nom} = await Modele.findById(voiture.modeleId, {nom: 1})
+            const [tarifLocation] = await VUT.find({voitureId: voiture._id}, {tarifLocation: 1})
+            return {...voiture, modele: nom, prixLocation: tarifLocation.tarifLocation}
+        }))
+        const msg = 'Voitures récupérés avec succès'
+        return res.status(200).json({message: msg, data: voitureWithModeleAndLocPrice})
+    } catch (error) {
+        console.log("Erreur dans user.controller (getRentVoitues)", error)
+        const msg = 'Erreur lors de la récupération des données'
+        return res.status(500).json({message: msg, erreur: error})
+    }
+}
+
+const getSaleVoitues = async (req, res) => {
+    try {
+        const rep = await Voiture.find({ quantite: { $gt: 0 }, prix: { $ne: null } }).lean()
+        const voitureWithModeleAndLocPrice = await Promise.all(rep.map(async (voiture) => {
+            const {nom} = await Modele.findById(voiture.modeleId, {nom: 1})
+            const [tarifLocation] = await VUT.find({voitureId: voiture._id}, {tarifLocation: 1})
+            return {...voiture, modele: nom, prixLocation: tarifLocation.tarifLocation}
+        }))
+        const msg = 'Voitures récupérés avec succès'
+        return res.status(200).json({message: msg, data: voitureWithModeleAndLocPrice})
+    } catch (error) {
+        console.log("Erreur dans user.controller (getSaleVoitues)", error)
+        const msg = 'Erreur lors de la récupération des données'
+        return res.status(500).json({message: msg, erreur: error})
     }
 }
 
@@ -214,6 +261,7 @@ const getVoituresDetailsForClient = async (req, res) => {
         return res.status(200).json({message: msg, data: {...voiture, categorie, marque, modele, tarif, unites, tarifOp, options}})
         
     } catch (error) {
+        console.log("Erreur dans user.controller (getAuthUserDetails)", error)
         const msg = "Erreur lors de récupération des données"
         return res.status(500).json({message: msg, erreur: error})
     }
@@ -224,5 +272,7 @@ module.exports = {
     getVoitues,
     updateVoiture,
     deleteVoiture,
+    getRentVoitues,
+    getSaleVoitues,
     getVoituresDetailsForClient
 } 

@@ -73,13 +73,13 @@ const ClientDetails = () => {
                 <div className="w-1/2">
                     {/* Permis */}
                     <DetailsClientImageSide 
-                        title="photo du permis" 
+                        title="Photo du permis" 
                         src={data.data?.photoPermis} 
                         onClick={() => setSelectedImage(data.data?.photoPermis)}
                     />
                     {/* CNI */}
                     <DetailsClientImageSide 
-                        title="photo de la CNI" 
+                        title="Photo de la CNI" 
                         src={data.data?.photoCNI}
                         onClick={() => setSelectedImage(data.data?.photoCNI)}
                     />

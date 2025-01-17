@@ -1,6 +1,7 @@
 const Marque = require('../models/Marque.model')
 const Modele = require('../models/Modele.model')
 const { deleteLogo } = require('../services')
+const mongoose = require('mongoose')
 
 /**
  * Ajoute une nouvelle marque avec un logo.
@@ -12,16 +13,27 @@ const { deleteLogo } = require('../services')
 const addMarque = async (req, res) => {
     const {nom, paysDorigine} = req.body
     try {
+        if(!nom || !req.file) {
+            return res.status(400).json({
+                message: "Veuillez renseigner le nom de la marque et ajouter un logo"
+            })
+        }
         const rep = await Marque.create({
             nom,
             paysDorigine,
             logo: `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`
         })
-        const msg = 'Marque enregistrée avec succès'
-        return res.status(201).json({message: msg, data: rep})
+
+        return res.status(201).json({
+            message: 'Marque enregistrée avec succès', 
+            data: rep
+        })
     } catch (error) {
-        const msg = "Erreur lors de l'enregistrement"
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans marque.controller (addMarque)", error)
+        return res.status(500).json({
+            message: "Erreur lors de l'enregistrement", 
+            erreur: error
+        })
     }
 }
 
@@ -37,10 +49,17 @@ const getMarques = async (req, res) => {
         const rep = await Marque.find()
         const msg = rep.length === 0 ? "Aucune marque enregistrée veuillez en ajouter" 
         : "Marques récupérées avec succès"
-        return res.status(200).json({message: msg, data: rep})
+
+        return res.status(200).json({
+            message: msg, 
+            data: rep
+        })
     } catch (error) {
-        const msg = "Erreur lors de la récupération des données"
-        return res.status(500).json({message: msg, errerur: error})
+        console.log("Erreur dans marque.controller (getMarques)", error)
+        return res.status(500).json({
+            message: "Erreur lors de la récupération des données", 
+            errerur: error
+        })
     }
 }
 
@@ -48,11 +67,17 @@ const getMarqueById = async (req, res) => {
     const {id} = req.params
     try {
         const rep = await Marque.findById(id)
-        const msg = "Détails de la marque récupérés avec succès"
-        return res.status(200).json({message: msg, data: rep})
+
+        return res.status(200).json({
+            message: "Détails de la marque récupérés avec succès", 
+            data: rep
+        })
     } catch (error) {
-        const msg = "Erreur lors de la récupération des données"
-        return res.status(500).json({message: msg, errerur: error})
+        console.log("Erreur dans marque.controller (getMarqueById)", error)
+        return res.status(500).json({
+            message: "Erreur lors de la récupération des données", 
+            errerur: error
+        })
     }
 }
 
@@ -65,20 +90,39 @@ const getMarqueById = async (req, res) => {
  */
 const deleteMarque = async (req, res) => {
     const { id } = req.params
+    const session = await mongoose.startSession()
+    session.startTransaction()
+
     try {
-        const rep = await Marque.findByIdAndDelete(id)
-        const { logo } = rep
+        const marque = await Marque.findByIdAndDelete(id, { session })
+        if(!marque) {
+            return res.status(400).json({
+                message: "Aucune marque trouvée avec l'identifiant fourni."
+            })
+        }
+        const { logo } = marque
         try {
             deleteLogo(logo)
         } catch (error) {
             console.log("Erreur lors de la suppression du logo précédent: ", error.message);
         }
-        const rep1 = await Modele.deleteMany({marqueId: rep._id})
-        const msg = 'Marque supprimée avec succès'
-        return res.status(200).json({message: msg, data: rep})
+        await Modele.deleteMany({marqueId: marque._id}, { session })
+
+        await session.commitTransaction()
+
+        return res.status(200).json({
+            message: 'Marque supprimée avec succès', 
+            data: marque
+        })
     } catch (error) {
-        const msg = 'Erreur lors de la supprission'
-        return res.status(500).json({message: msg, erreur: error})
+        await session.abortTransaction()
+        console.log("Erreur dans marque.controller (deleteMarque)", error)
+        return res.status(500).json({
+            message: 'Erreur lors de la supprission', 
+            erreur: error
+        })
+    } finally {
+        session.endSession()
     }
 }
 
@@ -95,6 +139,12 @@ const updateMarque = async (req, res) => {
     
     try {
         const marque = await Marque.findById(id)
+        if(!marque) {
+            return res.status(400).json({
+                message: "Aucune marque trouvée avec l'identifiant fourni."
+            })
+        }
+
         const { logo } = marque
 
         const updateData = {
@@ -116,24 +166,33 @@ const updateMarque = async (req, res) => {
             }
         }
 
-        const msg = 'Marque modifiée avec succès';
-        return res.status(200).json({message: msg, data: rep})
+
+        return res.status(200).json({
+            message: 'Marque modifiée avec succès', 
+            data: rep
+        })
     } catch (error) {
-        const msg = "Erreur lors de la modification"
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans marque.controller (updateMarque)", error)
+        return res.status(500).json({
+            message: "Erreur lors de la modification", 
+            erreur: error
+        })
     }
 }
 
 const getMarquesWithTheirModeles = async (req, res) => {
     try {
         const marques = await Marque.find().lean()
-        const marquesWithModels = await Promise.all(marques.map(async (marque) => {
-            const modeles = await Modele.find({marqueId: marque._id}).lean()
-            return {...marque, modeles}
-        }))
+        const marquesWithModels = await Promise.all(
+            marques.map(async (marque) => {
+                const modeles = await Modele.find({marqueId: marque._id}).lean()
+                return {...marque, modeles}
+            })
+        )
 
         res.status(200).json(marquesWithModels)
     } catch (error) {
+        console.log("Erreur dans marque.controller (getMarquesWithTheirModeles)", error)
         res.status(500).json({message: 'Erreur lors de la récupération des marques et des modèles'})
     }
 }

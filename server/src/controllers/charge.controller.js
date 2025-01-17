@@ -1,4 +1,5 @@
 const Charge = require('../models/Charge.model')
+const Voiture = require('../models/Voiture.model')
 
 /**
  * Ajout d'une nouvelle charge.
@@ -11,13 +12,38 @@ const addCharge = async (req, res) => {
     const {type, montant, voitureId} = req.body
 
     try {
-        const rep = await Charge.create({type, montant, voitureId})
-        const msg = "Charge enregistrée avec succès"
+        if(!type || !montant) {
+            return res.status(400).json({
+                message: "Tous les champs sont obligatoires."
+            })
+        }
 
-        return res.status(201).json({message: msg, data: rep})
+        if(!voitureId) {
+            return res.status(400).json({
+                message: "Veuillez sélectionner un véhicule."
+            })
+        }
+
+        const voiture = await Voiture.findById(voitureId)
+
+        if(!voiture) {
+            return res.status(400).json({
+                message: "Ce véhicule n'existe pas."
+            })
+        }
+        
+        const rep = await Charge.create({type, montant, voitureId})
+
+        return res.status(201).json({
+            message: "Charge enregistrée avec succès", 
+            data: rep
+        })
     } catch (error) {
-        const msg = "Erreur lors de l'enregistrement"
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans charge.controller (addCharge)", error)
+        return res.status(500).json({
+            message: "Erreur lors de l'enregistrement", 
+            erreur: error
+        })
     }
 }
 
@@ -31,12 +57,17 @@ const addCharge = async (req, res) => {
 const getCharges = async (req, res) => {
     try {
         const rep = await Charge.find()
-        const msg = "Charges récupérées avec succès"
 
-        return res.status(200).json({message: msg, data: rep})
+        return res.status(200).json({
+            message: "Charges récupérées avec succès", 
+            data: rep
+        })
     } catch (error) {
-        const msg = "Erreur lors de la récupération des données"
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans charge.controller (getCharges)", error)
+        return res.status(500).json({
+            message: "Erreur lors de la récupération des données", 
+            erreur: error
+        })
     }
 }
 
@@ -53,11 +84,17 @@ const updateCharge = async (req, res) => {
     try {
         const rep = await Charge.findByIdAndUpdate(id, {
             type, montant, voitureId}, {new: true})
-        const msg = "Charge modifiée avec succès"
-        return res.status(200).json({message: msg, data: rep})
+
+        return res.status(200).json({
+            message: "Charge modifiée avec succès", 
+            data: rep
+        })
     } catch (error) {
-        const msg = "Erreur lors de la modification des données"
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans charge.controller (updateCharge)", error)
+        return res.status(500).json({
+            message: "Erreur lors de la modification des données", 
+            erreur: error
+        })
     }
 }
 
@@ -72,12 +109,17 @@ const deleteCharge = async (req, res) => {
     const {id} = req.params
     try {
         const rep = await Charge.findByIdAndDelete(id)
-        const msg = "Charge supprimée avec succès"
 
-        return res.status(200).json({message: msg, data: rep})
+        return res.status(200).json({
+            message: "Charge supprimée avec succès",
+            data: rep
+        })
     } catch (error) {
-        const msg = "Erreur lors de la suppression"
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans charge.controller (deleteCharge)", error)
+        return res.status(500).json({
+            message: "Erreur lors de la suppression", 
+            erreur: error
+        })
     }
 }
 

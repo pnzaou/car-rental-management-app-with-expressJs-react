@@ -10,15 +10,25 @@ const uniteTarification = require('../models/uniteTarification.model')
 const addUnite = async (req, res) => {
     const { nom } = req.body
     try {
+        if(!nom) {
+            return res.status(400).json({
+                message: "Veuillez saisir le nom de l'unité"
+            })
+        }
 
         const rep = await uniteTarification.create({nom})
-        const msg = "Unité de tarification ajouté avec succès"
-        return res.status(201).json({message: msg, data: rep})
+
+        return res.status(201).json({
+            message: "Unité de tarification ajouté avec succès", 
+            data: rep
+        })
 
     } catch (error) {
-
-        const msg = "Erreur lors de l'ajout de l'unité"
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans uniteTarification.controller (addUnite)", error)
+        return res.status(500).json({
+            message: "Erreur lors de l'ajout de l'unité", 
+            erreur: error
+        })
 
     }
 }
@@ -34,13 +44,21 @@ const getUnites = async (req, res) => {
     try {
 
         const rep = await uniteTarification.find()
-        const msg = "Unités de tarification récupérées avec succès"
-        return res.status(200).json({message: msg, data: rep})
+        const msg = rep.length === 0 
+        ? "Aucune unité enregistrée veuillez en ajouter" 
+        :"Unités de tarification récupérées avec succès"
+
+        return res.status(200).json({
+            message: msg, 
+            data: rep
+        })
 
     } catch (error) {
-
-        const msg = "Erreur lors de la récupération des données"
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans uniteTarification.controller (getUnites)", error)
+        return res.status(500).json({
+            message: "Erreur lors de la récupération des données", 
+            erreur: error
+        })
 
     }
 }
@@ -56,14 +74,32 @@ const updateUnite = async (req, res) => {
     const { id } = req.params 
     const { nom } = req.body 
     try {
+
+        if(!nom) {
+            return res.status(400).json({
+                message: "Veuillez renseigner le nom de l'unité (Ex: 1 jour)."
+            })
+        }
+
         const rep = await uniteTarification.findByIdAndUpdate(id, { nom }, {new: true})
-        const msg = "Unité de tqrificqtion modifiée avec succès"
-        return res.status(200).json({message: msg, data: rep})
+
+        if(!rep) {
+            return res.status(400).json({
+                message: "Aucune unité de tarification trouvée avec l'id fourni."
+            })
+        }
+
+        return res.status(200).json({
+            message: "Unité de tqrificqtion modifiée avec succès", 
+            data: rep
+        })
 
     } catch (error) {
-        
-        const msg = "Erreur lors de la modification"
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans uniteTarification.controller (updateUnite)", error)
+        return res.status(500).json({
+            message: "Erreur lors de la modification", 
+            erreur: error
+        })
 
     }
 }
@@ -80,13 +116,23 @@ const deleteUnite = async (req, res) => {
     try {
 
         const rep = await uniteTarification.findByIdAndDelete(id)
-        const msg = "Unité de tarification supprimée avec succès"
-        return res.status(200).json({message: msg, data: rep})
+        if(!rep) {
+            return res.status(400).json({
+                message: "Aucune unité de tarification trouvée avec l'id fourni."
+            })
+        }
+
+        return res.status(200).json({
+            message: "Unité de tarification supprimée avec succès", 
+            data: rep
+        })
 
     } catch (error) {
-        
-        const msg = "Erreur lors de la suppression"
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans uniteTarification.controller (deleteUnite)", error)
+        return res.status(500).json({
+            message: "Erreur lors de la suppression", 
+            erreur: error
+        })
 
     }
 }

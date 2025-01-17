@@ -1,5 +1,6 @@
 const Modele = require('../models/Modele.model')
 const Voiture = require('../models/Voiture.model')
+const Marque = require('../models/Marque.model')
 
 /**
  * Ajoute un nouveau modèle.
@@ -12,12 +13,31 @@ const addModele = async (req, res) => {
     const { marqueId } = req.params
     const {nom, description} = req.body
     try {
+        if(!nom || !description) {
+            res.status(400).json({
+                message: "Tous les champs sont obligatoires."
+            })
+        }
+
+        const marque = await Marque.findById(marqueId)
+        if(!marque) {
+            res.status(400).json({
+                message: "Aucune marque trouvée avec l'identifiant fourni."
+            })
+        }
+
         const rep = await Modele.create({nom, description, marqueId})
-        const msg = "Modèle Enregistré avec succès."
-        return res.status(201).json({message: msg, data: rep})
+
+        return res.status(201).json({
+            message: "Modèle Enregistré avec succès.",
+            data: rep
+        })
     } catch (error) {
-        const msg ="Erreur lors de l'enregistrement"
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans modele.controller (addModele)", error)
+        return res.status(500).json({
+            message: "Erreur lors de l'enregistrement", 
+            erreur: error
+        })
     }
 }
 
@@ -32,11 +52,17 @@ const getModeles = async (req, res) => {
     const {idMarque} = req.params
     try {
         const rep = await Modele.find({marqueId: idMarque})
-        const msg = "Modèles récupérés avec succès"
-        return res.status(200).json({message: msg, data: rep})
+
+        return res.status(200).json({
+            message: "Modèles récupérés avec succès", 
+            data: rep
+        })
     } catch (error) {
-        const msg = "Erreur lors de la récupération des données"
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans modele.controller (getModeles)", error)
+        return res.status(500).json({
+            message: "Erreur lors de la récupération des données", 
+            erreur: error
+        })
     }
 }
 
@@ -51,12 +77,25 @@ const updateModele = async (req, res) => {
     const { id } = req.params
     const {nom, description, marqueId} = req.body
     try {
+        const marque = await Marque.findById(marqueId)
+        if(!marque) {
+            res.status(400).json({
+                message: "Aucune marque trouvée avec l'identifiant fourni."
+            })
+        }
+
         const rep = await Modele.findByIdAndUpdate(id, {nom, description, marqueId}, {new: true})
-        const msg = "Modèle modifié avec succès"
-        return res.status(200).json({message: msg, data: rep})
+
+        return res.status(200).json({
+            message: "Modèle modifié avec succès", 
+            data: rep
+        })
     } catch (error) {
-        const msg = "Erreur lors de la modification du modèle"
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans modele.controller (updateModele)", error)
+        return res.status(500).json({
+            message: "Erreur lors de la modification du modèle", 
+            erreur: error
+        })
     }
 }
 
@@ -72,11 +111,17 @@ const deleteModele = async (req, res) => {
     try {
         const rep = await Modele.findByIdAndDelete(id)
         await Voiture.deleteMany({modeleId: rep._id})
-        const msg = "Modèle supprimé avec succès"
-        return res.status(200).json({message: msg, data: rep})
+
+        return res.status(200).json({
+            message: "Modèle supprimé avec succès", 
+            data: rep
+        })
     } catch (error) {
-        const msg = 'Erreur lors de la supression'
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans modele.controller (deleteModele)", error)
+        return res.status(500).json({
+            message: 'Erreur lors de la supression',
+            erreur: error
+        })
     }
 }
 

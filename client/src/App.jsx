@@ -17,7 +17,7 @@ const fetchMarques = async () => {
 }
 
 const fetchVoitures = async () => {
-  const {data} = await axios.get(`http://localhost:5000/api/public/voitures`)
+  const {data} = await axios.get(`http://localhost:5000/api/voitures-rent-client`)
   return data
 }
 

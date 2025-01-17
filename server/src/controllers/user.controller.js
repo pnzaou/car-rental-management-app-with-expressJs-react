@@ -1,7 +1,6 @@
 const User = require('../models/User.model')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const nodemailer = require('nodemailer')
 const Profil = require('../models/Profil.model')
 const fs = require('fs')
 const { sendConfirmationEmail, transporter } = require('../services')
@@ -22,8 +21,14 @@ const { sendConfirmationEmail, transporter } = require('../services')
 const addUser = async (req, res) => {
     const {nom, prenom, email, telephone, password, profilId} = req.body
     try {
-        const tour = await bcrypt.genSalt(10)
-        const hashedPassword = await bcrypt.hash(password, tour)
+        if(!nom || !prenom || !email || !telephone || !password || !profilId) {
+            return res.status(400).json({
+                message: "Tous les champs sont obligatoires."
+            })
+        }
+
+        const salt = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(password, salt)
 
         const rep = await User.create({
             nom,
@@ -33,12 +38,19 @@ const addUser = async (req, res) => {
             password: hashedPassword,
             profilId
         })
-        const msg = 'Utilisateur créé avec succès'
-        return res.status(201).json({message: msg, data: rep})
+
+
+        return res.status(201).json({
+            message: 'Utilisateur créé avec succès', 
+            data: rep
+        })
 
     } catch (error) {
-        const msg = 'Echec lors de l\'enregistrement'
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans user.controller (addUser)", error)
+        return res.status(500).json({
+            message: "Echec de l'enregistrement", 
+            erreur: error
+        })
     }
 }
 
@@ -53,11 +65,20 @@ const getUsers = async (req, res) => {
     const {userId} = req.authData
     try {
         const rep = await User.find({_id: {$ne: userId}})
-        const msg = 'Utilisateurs récupérés avec succès'
-        return res.status(200).json({message: msg, data: rep})
+        const msg = rep.length === 0 
+        ? "Aucun utilisateur trouvé veuillez en ajouter" 
+        : "Utilisateurs récupérés avec succès"
+
+        return res.status(200).json({
+            message: msg, 
+            data: rep
+        })
     } catch (error) {
-        const msg = 'Erreur lors de la récupération des données'
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans user.controller (getUsers)", error)
+        return res.status(500).json({
+            message: "Erreur lors de la récupération des utilisateurs", 
+            erreur: error
+        })
     }
 }
 
@@ -73,6 +94,13 @@ const getUsers = async (req, res) => {
 const login = async (req, res) => {
     const { email, password } = req.body
     try {
+
+        if( !email || !password ) {
+            return res.status(400).json({
+                message: "Veuillez fournier vos identifiants."
+            })
+        }
+
         const user = await User.findOne({email})
         if(!user) {
             return res.status(401).json({message: 'Email ou mot de passe incorrect'})
@@ -95,17 +123,23 @@ const login = async (req, res) => {
                             userProfil: profil.nom,
                             profilId: user.profilId
                         },
-                        secret, {expiresIn: '4h', algorithm: "RS256"}
+                        secret, {expiresIn: '8h', algorithm: "RS256"}
                     )
-                    const msg = 'Connexion réussie'
-                    return res.status(200).json({message: msg, token: token})
+
+                    return res.status(200).json({
+                        message: "Connexion réussie", 
+                        token: token
+                    })
                 }
             }
         }
 
     } catch (error) {
-        const msg = 'Erreur lors de la connexion'
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans user.controller (login)", error)
+        return res.status(500).json({
+            message: 'Erreur lors de la connexion',
+            erreur: error
+        })
     }
 }
 
@@ -120,15 +154,30 @@ const login = async (req, res) => {
 const getUserDetails = async (req, res) => {
     const { id } = req.params
     try {
+        if(!id) {
+            return res.status(400).json({
+                message: "Veuillez fournir l'id de l'utilisateur."
+            })
+        }
 
         const user = await User.findById(id)
+        if(!user) {
+            return res.status(400).json({
+                message: "Aucun utilisateur trouvé avec l'id fourni."
+            })
+        }
         const profil = await Profil.findById(user.profilId)
-        const msg = 'Utilisateur récupéré avec succès'
 
-        return res.status(200).json({message: msg, data: {user, profil}})
+        return res.status(200).json({
+            message: "Utilisateur récupéré avec succès", 
+            data: {user, profil}
+        })
     } catch (error) {
-        const msg = 'Erreur lors de la récupération de l\'utilisateur'
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans user.controller (getUserDetails)", error)
+        return res.status(500).json({
+            message: "Erreur lors de la récupération de l'utilisateur", 
+            erreur: error
+        })
     }
 }
 
@@ -144,11 +193,22 @@ const deleteUser = async (req, res) => {
     const { id } = req.params
     try {
         const rep = await User.findByIdAndDelete(id)
-        const msg = 'Utilisateur supprimé avec succès'
-        return res.status(200).json({message: msg, data: rep})
+
+        if(!rep) {
+            return res.status(400).json({
+                message: "Aucun utilisateur trouvé avec l'id fourni."
+            })
+        }
+        return res.status(200).json({
+            message: "Utilisateur supprimé avec succès",
+            data: rep
+        })
     } catch (error) {
-        const msg = 'Erreur lors de la suppréssion'
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans user.controller (deleteUser)", error)
+        return res.status(500).json({
+            message: "Erreur lors de la suppréssion", 
+            erreur: error
+        })
     }
 }
 
@@ -167,6 +227,11 @@ const requestPasswordChange = async (req, res) => {
     const {oldPassword, newPassword} = req.body
 
     try {
+        if(!oldPassword || !newPassword) {
+            return res.status(400).json({
+                message: "Veuillez fournir l'ancien et le nouveau mot de passe."
+            })
+        }
         const user = await User.findById(userId)
         const verifPassword = await bcrypt.compare(oldPassword, user.password)
         if(!verifPassword){
@@ -183,9 +248,11 @@ const requestPasswordChange = async (req, res) => {
         }
 
     } catch (error) {
-        const msg = 'Erreur lors de la modification du mot de passe'
-        console.log(error);
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans user.controller (requestPasswordChange)", error)
+        return res.status(500).json({
+            message: 'Erreur lors de la modification du mot de passe', 
+            erreur: error
+        })
     }    
 }
 
@@ -193,18 +260,27 @@ const confirmPasswordChange = async (req, res) => {
     const {token} = req.query
 
     try {
+        if(!token) {
+            return res.status(400).json({
+                message: "Aucun token fourni."
+            })
+        }
         const secret = fs.readFileSync('./.meow/meowPu.pem')
         const decode = jwt.verify(token, secret)
         const {userId, newPassword} = decode 
-        const tour = await bcrypt.genSalt(10)
-        const hashedPassword = await bcrypt.hash(newPassword, tour)
+        const salt = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(newPassword, salt)
 
         await User.updateOne({ _id: userId }, { $set: { password: hashedPassword } })
 
         res.status(200).json({message: 'Mot de passe modifié avec succès'})
 
     } catch (error) {
-        res.status(400).json({message: 'Le lien de confirmation est invalide ou a expiré', erreur: error})
+        console.log("Erreur dans user.controller (confirmPasswordChange)", error)
+        res.status(400).json({
+            message: 'Le lien de confirmation est invalide ou a expiré', 
+            erreur: error
+        })
     }
 }
 
@@ -219,15 +295,34 @@ const confirmPasswordChange = async (req, res) => {
 const toggleUserState = async (req, res) => {
     const { id } = req.params
     try {
-        const user = await User.findById(id)
-        user.etat = !user.etat
+        if(!id) {
+            return res.status(400).json({
+                message: "Veuillez fournir l'id de l'utilisateur"
+            })
+        }
 
+        const user = await User.findById(id)
+        if(!user) {
+            return res.status(400).json({
+                message: "Aucun utilisateur trouvé avec l'id fourni."
+            })
+        }
+        
+        user.etat = !user.etat
         const rep = await user.save()
+
         const msg = `Utilisateur ${ rep.etat ? 'débloqué' : 'bloqué'} avec succès`
-        return res.status(200).json({message: msg, data: rep})
+
+        return res.status(200).json({
+            message: msg,
+            data: rep
+        })
     } catch (error) {
-        const msg = 'Une erreur est survenue'
-        return res.status(500).json({message: msg, erreur: error})
+        console.log("Erreur dans user.controller (toggleUserState)", error)
+        return res.status(500).json({
+            message: "Une erreur s'est produite. Veuillez réessayer.",
+            erreur: error
+        })
     }
 }
 
@@ -240,6 +335,7 @@ const getAuthUserDetails = async (req, res) => {
 
         return res.status(200).json({message: msg, data: {user, profil}})
     } catch (error) {
+        console.log("Erreur dans user.controller (getAuthUserDetails)", error)
         const msg = 'Erreur lors de la récupération de l\'utilisateur'
         return res.status(500).json({message: msg, erreur: error})
     }

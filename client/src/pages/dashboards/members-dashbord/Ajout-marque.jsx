@@ -88,7 +88,7 @@ export default function AjoutMarque() {
                     required: true
                 })}
               />
-              {errors.nom && <span className="
+              {errors.image && <span className="
                             mt-2 text-sm text-red-500
                         ">
                             Champ requis! Ajouter le logo de la marque 

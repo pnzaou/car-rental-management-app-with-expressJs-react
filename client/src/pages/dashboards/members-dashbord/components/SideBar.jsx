@@ -64,7 +64,7 @@ const SideBar = ({ isOpen }) => {
             </li>
             <hr className="my-2 border-gray-500" />
             <li className="dropdown dropdown-hover relative">
-              <label tabIndex={0} className="">Gesttion des clients</label>
+              <label tabIndex={0} className="">Gestion des clients</label>
               <ul
                 tabIndex={0}
                 className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow mt-2 ml-20"
@@ -76,7 +76,7 @@ const SideBar = ({ isOpen }) => {
             </li>
             <hr className="my-2 border-gray-500" />
             <li className="dropdown dropdown-hover relative">
-              <label tabIndex={0} className="">Gesttion des réservations</label>
+              <label tabIndex={0} className="">Gestion des réservations</label>
               <ul
                 tabIndex={0}
                 className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow mt-2 ml-20"

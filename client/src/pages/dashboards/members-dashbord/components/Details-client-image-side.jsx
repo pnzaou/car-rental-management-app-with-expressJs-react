@@ -12,7 +12,7 @@ const DetailsClientImageSide = ({title, src, onClick}) => {
                 <h1 className="font-bold">{title}</h1>
             </div>
             <div className="flex justify-center mt-4">
-                <img src={src} alt={title} className="w-40 h-40 object-cover rounded-md" />
+                <img src={src} alt={title} className="w-100 h-40 object-cover rounded-md" />
             </div>
         </div>
     );

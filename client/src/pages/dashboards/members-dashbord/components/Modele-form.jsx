@@ -57,7 +57,7 @@ const ModeleForm = ({marqueId, refetch}) => {
                                     required: true
                                 })} 
                             />
-                            {errors.autorisation && <span className="
+                            {errors.nom && <span className="
                                 mt-2 text-sm text-red-500
                             ">
                                 Ce champ est obligatoire!
@@ -76,7 +76,7 @@ const ModeleForm = ({marqueId, refetch}) => {
                                     required: true
                                 })} 
                             />
-                            {errors.autorisation && <span className="
+                            {errors.description && <span className="
                                 mt-2 text-sm text-red-500
                             ">
                                 Ce champ est obligatoire!

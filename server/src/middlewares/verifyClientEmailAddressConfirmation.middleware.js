@@ -4,8 +4,14 @@ const fs = require('fs')
 const {sendConfirmationEmail, transporter} = require("../services")
 
 const verifyClientEmailAddressConfirmation = async (req, res, next) => {
-    const {email} = req.body    
+    const {email} = req.body  
+      
     try {
+        if(!email) {
+            return res.status(400).json({
+                message: "Tous les champs sont obligatoires."
+            })
+        }
         const client = await Client.findOne({email})
         if(!client) {
             return res.status(401).json({message: 'Email ou mot de passe incorrect !'})
